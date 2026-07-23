@@ -131,6 +131,12 @@ Isso produz uma pasta `PDV-Unicka/` com um `.exe` que roda sem Java instalado �
 
 Sistema **em produção**, rodando no dia a dia da loja, e evoluído em várias versões a partir do feedback real de quem usa (meus pais). Cada melhoria — de atalhos de teclado a conferência de caixa às cegas — nasceu de uma dor observada no balcão.
 
+## 📄 Licença
+
+Distribuído sob a **Licença MIT** — você pode usar, estudar, modificar e compartilhar livremente, mantendo o aviso de copyright. Veja o arquivo [LICENSE](LICENSE) para os detalhes.
+
+© 2026 Jhonatan Brum
+
 ---
 
 <div align="center">
