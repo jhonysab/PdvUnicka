@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unicka Digital — PDV</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="style-index.css">
+</head>
+<body>
+
+<!-- TELA INICIAL (hub de navegação) -->
+<div id="tela-hub" style="display:none;">
+    <div class="hub-container">
+        <header class="hub-header">
+            <div class="header-marca">
+                <span class="header-logo">U</span>
+                <div>
+                    <h1>Unicka Digital</h1>
+                    <p class="header-subtitulo">Sistema de PDV</p>
+                </div>
+            </div>
+            <div class="hub-usuario">
+                <span id="hub-nome-usuario"></span>
+                <span id="hub-badge-perfil" class="badge-perfil"></span>
+                <button class="btn-logout" onclick="logout()">Sair</button>
+            </div>
+        </header>
+
+        <div class="hub-cards" id="hub-cards">
+            <!-- Gerado pelo script conforme o perfil -->
+        </div>
+    </div>
+</div>
+
+<!-- MODAL DE LOGIN -->
+<!-- Cadastro de usuários é feito pelo admin na tela "Usuários" do hub -->
+<div id="tela-auth" class="auth-overlay">
+    <div class="auth-box">
+        <div class="auth-logo">
+            <span class="header-logo">U</span>
+        </div>
+        <h1 class="auth-titulo">Unicka Digital</h1>
+        <p class="auth-subtitulo">Sistema de Ponto de Venda</p>
+
+        <!-- Formulário de Login -->
+        <div id="form-login">
+            <div class="auth-campo">
+                <label>Usuário</label>
+                <input type="text" id="login-username" placeholder="Seu usuário"
+                       onkeypress="if(event.key==='Enter') document.getElementById('login-senha').focus()">
+            </div>
+            <div class="auth-campo">
+                <label>Senha</label>
+                <input type="password" id="login-senha" placeholder="Sua senha"
+                       onkeypress="if(event.key==='Enter') fazerLogin()">
+            </div>
+            <p id="login-erro" class="auth-erro"></p>
+            <button class="btn-auth" onclick="fazerLogin()">Entrar</button>
+        </div>
+    </div>
+</div>
+
+<script src="script-index.js"></script>
+</body>
+</html>

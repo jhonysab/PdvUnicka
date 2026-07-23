@@ -1,0 +1,233 @@
+/* style-caixa.css — estilos exclusivos da tela de caixa */
+
+.container { max-width: 1100px; }
+
+/* ── Painel de vendas ──────────────────────────────────────────────── */
+
+.secao-historico h2 {
+    font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 14px;
+}
+
+.tabela-wrapper-scroll {
+    max-height: 340px; overflow-y: auto;
+    border: 1px solid var(--border); border-radius: var(--radius);
+    background: var(--bg-surface);
+}
+
+/* ── Ações (btn fechar caixa) ──────────────────────────────────────── */
+
+.btn-sangria {
+    background: var(--bg-surface-alt); color: var(--red);
+    border: 1px solid var(--red); padding: 12px 22px;
+    border-radius: var(--radius); font-size: 14px; font-weight: 600;
+}
+.btn-sangria:hover { background: rgba(248, 113, 113, 0.1); }
+
+/* Suprimento: mesmo formato da sangria, mas verde (dinheiro entrando) */
+.btn-suprimento {
+    background: var(--bg-surface-alt); color: var(--green);
+    border: 1px solid var(--green); padding: 12px 22px;
+    border-radius: var(--radius); font-size: 14px; font-weight: 600;
+}
+.btn-suprimento:hover { background: rgba(52, 211, 153, 0.1); }
+
+.btn-fechar-caixa {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--bg-surface-alt); color: var(--text-muted);
+    border: 1px solid var(--border); padding: 12px 22px;
+    border-radius: var(--radius); font-size: 14px; font-weight: 600;
+    margin-left: auto; cursor: pointer; transition: all 0.2s;
+}
+.btn-fechar-caixa:hover { background: var(--bg-hover); color: var(--yellow); border-color: var(--yellow); }
+
+.badge-operador {
+    background: var(--bg-surface-alt); color: var(--green);
+    border: 1px solid var(--green); padding: 6px 14px;
+    border-radius: 20px; font-size: 13px; font-weight: 600;
+}
+
+/* ── Overlay caixa fechado ─────────────────────────────────────────── */
+
+.overlay-caixa-fechado {
+    position: fixed; inset: 0;
+    background: rgba(5, 8, 18, 0.92); backdrop-filter: blur(6px);
+    display: flex; justify-content: center; align-items: center; z-index: 2000;
+}
+
+.overlay-conteudo {
+    text-align: center; background: var(--bg-surface);
+    padding: 48px 40px; border-radius: var(--radius-lg);
+    border: 1px solid var(--border); box-shadow: 0 16px 48px rgba(0,0,0,0.5);
+    max-width: 420px;
+}
+
+.overlay-icone { font-size: 48px; display: block; margin-bottom: 16px; }
+
+.overlay-conteudo h2 {
+    font-size: 22px; font-weight: 700; color: var(--text); margin-bottom: 8px;
+}
+
+.overlay-conteudo p { color: var(--text-muted); font-size: 14px; margin-bottom: 24px; }
+
+.btn-abrir-caixa {
+    background: linear-gradient(135deg, var(--accent), var(--purple));
+    color: #fff; padding: 14px 40px; font-size: 16px; font-weight: 700;
+    border: none; border-radius: var(--radius); cursor: pointer;
+    box-shadow: var(--shadow-glow); transition: transform 0.15s, box-shadow 0.2s;
+}
+.btn-abrir-caixa:hover { transform: translateY(-1px); box-shadow: 0 0 28px var(--accent-glow); }
+
+.btn-overlay-home {
+    display: block; margin: 12px auto 0;
+    background: transparent; border: none;
+    color: var(--text-dim); font-size: 13px;
+    cursor: pointer; font-family: var(--font);
+    text-decoration: underline; text-underline-offset: 3px;
+    transition: color 0.2s;
+}
+.btn-overlay-home:hover { color: var(--text-muted); }
+
+/* ── Modal frente de caixa ─────────────────────────────────────────── */
+
+.modal-content {
+    background: var(--bg-body); padding: 28px;
+    border-radius: var(--radius-lg); border: 1px solid var(--border);
+    max-width: 1150px; width: 94%; max-height: 92vh; overflow-y: auto;
+    position: relative; box-shadow: 0 16px 48px rgba(0,0,0,0.5);
+}
+
+.modal-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--border);
+}
+.modal-header h1 { font-size: 20px; font-weight: 700; color: var(--text); }
+
+.btn-fechar-modal {
+    background: var(--bg-surface-alt); color: var(--text-muted);
+    border: 1px solid var(--border); padding: 8px 16px; font-size: 13px;
+}
+.btn-fechar-modal:hover { background: var(--red); color: #fff; border-color: var(--red); }
+
+.caixa-container {
+    display: grid; grid-template-columns: 320px 1fr; gap: 20px;
+}
+
+.painel-lateral,
+.painel-carrinho {
+    background: var(--bg-surface); padding: 22px;
+    border-radius: var(--radius-lg); border: 1px solid var(--border);
+}
+
+.painel-lateral h2,
+.painel-carrinho h2 {
+    font-size: 14px; font-weight: 600; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 0.8px;
+    margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid var(--border);
+}
+
+.info-estoque { font-size: 13px; font-weight: 600; }
+
+/* ── Formas de pagamento ───────────────────────────────────────────── */
+
+.formas-pagamento { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+.btn-pagamento {
+    background: var(--bg-surface-alt); color: var(--text-muted);
+    border: 2px solid var(--border); padding: 14px 6px;
+    font-size: 14px; font-weight: 600; text-align: center; transition: all 0.18s;
+    border-radius: var(--radius); display: flex; flex-direction: column;
+    align-items: center; gap: 4px; cursor: pointer;
+}
+.btn-pagamento span { font-size: 22px; line-height: 1; }
+.btn-pagamento:hover { border-color: var(--border-light); color: var(--text); background: var(--bg-hover); }
+.btn-pagamento.ativo {
+    background: rgba(79,142,247,0.12); border-color: var(--accent);
+    color: var(--accent); font-weight: 700;
+    box-shadow: 0 0 10px var(--accent-glow);
+}
+
+/* ── Total box ─────────────────────────────────────────────────────── */
+
+.total-box {
+    background: linear-gradient(135deg, #111630, #161d3a);
+    border: 1px solid var(--accent); text-align: center;
+    padding: 18px; border-radius: var(--radius); margin-top: 18px;
+    box-shadow: 0 0 16px var(--accent-glow);
+}
+.total-box-label { font-size: 11px; font-weight: 600; letter-spacing: 1.2px; color: var(--text-muted); display: block; }
+.total-box-valor { font-size: 30px; font-weight: 800; color: var(--green); display: block; margin-top: 4px; }
+.total-box-valor-secundario { font-size: 22px; font-weight: 700; color: var(--text); display: block; margin-top: 2px; }
+.total-box-linha { margin-bottom: 8px; }
+.total-box-divisor { height: 1px; background: var(--border-light); margin-bottom: 10px; }
+
+/* ── Troco ─────────────────────────────────────────────────────────── */
+
+.troco-box {
+    background: var(--bg-surface-alt); border: 1px solid var(--border);
+    text-align: center; padding: 14px; border-radius: var(--radius); margin-top: 14px;
+}
+.troco-label { font-size: 11px; font-weight: 600; letter-spacing: 1.2px; color: var(--text-muted); display: block; }
+.troco-valor { font-size: 24px; font-weight: 700; color: var(--yellow); display: block; margin-top: 4px; }
+
+/* ── Botão finalizar ───────────────────────────────────────────────── */
+
+.btn-finalizar {
+    background: linear-gradient(135deg, #1a9a5e, var(--green-dim));
+    color: #fff; width: 100%; font-size: 16px; font-weight: 700;
+    padding: 14px; margin-top: 18px; border: 1px solid var(--green);
+    box-shadow: 0 0 12px rgba(52, 211, 153, 0.2); border-radius: var(--radius);
+}
+.btn-finalizar:hover { background: linear-gradient(135deg, #1eb86f, #1a9a5e); box-shadow: 0 0 20px rgba(52,211,153,0.3); }
+
+/* ── Carrinho ──────────────────────────────────────────────────────── */
+
+.btn-qtd {
+    background: var(--bg-surface-alt); color: var(--text);
+    border: 1px solid var(--border); width: 30px; height: 30px;
+    border-radius: 6px; font-size: 14px;
+    display: inline-flex; align-items: center; justify-content: center; padding: 0;
+}
+.btn-qtd:hover { background: var(--bg-hover); border-color: var(--border-light); }
+
+
+/* ── Barra de atalhos ──────────────────────────────────────────────── */
+
+.barra-atalhos {
+    display: flex; justify-content: center; gap: 24px;
+    margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border);
+}
+.atalho-item { font-size: 12px; color: var(--text-dim); display: flex; align-items: center; gap: 6px; }
+.atalho-item kbd {
+    background: var(--bg-surface-alt); border: 1px solid var(--border);
+    border-radius: 4px; padding: 2px 7px; font-family: var(--font);
+    font-size: 11px; font-weight: 600; color: var(--text-muted);
+}
+
+/* ── Modal fechar caixa ────────────────────────────────────────────── */
+
+.modal-fechar-content {
+    background: var(--bg-surface); padding: 30px;
+    border-radius: var(--radius-lg); border: 1px solid var(--border);
+    width: 580px; max-width: 94%; max-height: 90vh; overflow-y: auto;
+    box-shadow: 0 16px 48px rgba(0,0,0,0.5);
+}
+.modal-fechar-content h2 { font-size: 18px; font-weight: 700; color: var(--text); text-align: center; margin-bottom: 20px; }
+
+.fch-grid    { display: flex; flex-direction: column; gap: 20px; }
+.fch-secao   { background: var(--bg-body); padding: 16px 20px; border-radius: var(--radius); border: 1px solid var(--border); }
+.fch-secao h3 { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--text-dim); margin-bottom: 12px; }
+.fch-linha   { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; font-size: 14px; color: var(--text); border-bottom: 1px solid var(--border); }
+.fch-linha:last-child { border-bottom: none; }
+.fch-linha-sangria span:last-child { color: var(--red); }
+.fch-valor          { font-weight: 700; }
+.fch-valor-destaque { font-weight: 700; color: var(--green); }
+.fch-positivo       { color: var(--green) !important; }
+.fch-negativo       { color: var(--red) !important; }
+.fch-hint           { font-size: 12px; color: var(--text-dim); }
+.fch-hint-secao     { display: block; font-size: 12px; color: var(--text-dim); margin-bottom: 14px; line-height: 1.5; }
+.fch-servicos-grid  { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+.fch-total-servicos { display: flex; justify-content: space-between; align-items: center; background: var(--bg-surface-alt); border: 1px solid var(--border-light); border-radius: var(--radius); padding: 10px 14px; font-size: 13px; font-weight: 600; color: var(--text-muted); }
+.fch-valor-servicos { font-size: 15px; font-weight: 700; color: var(--orange); }
+.fch-resultado      { background: var(--bg-surface-alt); padding: 12px 16px; border-radius: var(--radius); margin-top: 12px; border: 1px solid var(--accent); box-shadow: 0 0 12px var(--accent-glow); }
+.fch-resultado .fch-linha { border-bottom-color: var(--border-light); }
+.fch-botoes { margin-top: 20px; }

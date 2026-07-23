@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fornecedores - Unicka Digital</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="style-global.css">
+    <link rel="stylesheet" href="style-fornecedores.css">
+</head>
+<body>
+
+<div class="container">
+
+    <header class="header-dashboard">
+        <div class="header-marca">
+            <span class="header-logo">U</span>
+            <div>
+                <h1>Unicka Digital</h1>
+                <p class="header-subtitulo">Diretório de Fornecedores</p>
+            </div>
+        </div>
+        <nav class="header-nav" id="nav-principal">
+            <!-- Gerado pelo nav.js -->
+        </nav>
+    </header>
+
+    <!-- CARDS DE RESUMO -->
+    <div class="dashboard-cards">
+        <div class="card">
+            <h3>Fornecedores Cadastrados</h3>
+            <p id="card-total-fornecedores">0</p>
+        </div>
+        <div class="card">
+            <h3>Produtos Vinculados</h3>
+            <p id="card-total-produtos">0</p>
+        </div>
+        <div class="card card-destaque">
+            <h3>Produtos Sem Fornecedor</h3>
+            <p id="card-sem-fornecedor">0</p>
+        </div>
+    </div>
+
+    <!-- FILTRO / BUSCA -->
+    <div class="filtro-fornecedor">
+        <input type="text" id="busca-fornecedor" class="input-pesquisa"
+               placeholder="🔍 Buscar por nome, telefone ou endereço..."
+               oninput="filtrarFornecedores()">
+        <select id="filtro-pagamento" onchange="filtrarFornecedores()">
+            <option value="">Todas as formas de pagamento</option>
+            <option value="DINHEIRO">Dinheiro</option>
+            <option value="PIX">PIX</option>
+            <option value="BOLETO">Boleto</option>
+            <option value="CREDITO">Cartão Crédito</option>
+            <option value="DEBITO">Cartão Débito</option>
+        </select>
+    </div>
+
+    <!-- LISTA DE FORNECEDORES -->
+    <div id="lista-fornecedores"></div>
+
+    <div id="sem-fornecedores" class="sem-registros" style="display:none;">
+        Nenhum produto com fornecedor cadastrado ainda.<br>
+        <small>Adicione o nome do fornecedor no cadastro de produtos.</small>
+    </div>
+
+</div>
+
+<script src="toast.js"></script>
+<script src="nav.js"></script>
+<script src="script-fornecedores.js"></script>
+</body>
+</html>

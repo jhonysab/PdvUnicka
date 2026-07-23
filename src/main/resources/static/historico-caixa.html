@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Histórico de Caixas - Unicka Digital</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="style-global.css">
+    <link rel="stylesheet" href="style-historico-caixa.css">
+</head>
+<body>
+
+<div class="container">
+
+    <header class="header-dashboard">
+        <div class="header-marca">
+            <span class="header-logo">U</span>
+            <div>
+                <h1>Unicka Digital</h1>
+                <p class="header-subtitulo">Histórico de Caixas Fechados</p>
+            </div>
+        </div>
+        <nav class="header-nav" id="nav-principal">
+            <!-- Gerado pelo nav.js -->
+        </nav>
+    </header>
+
+    <div class="tabela-wrapper-scroll">
+        <table>
+            <thead>
+            <tr>
+                <th class="clicavel" onclick="ordenar('caixaId')">#  <span id="seta-caixaId"></span></th>
+                <th class="clicavel" onclick="ordenar('operador')">Operador <span id="seta-operador"></span></th>
+                <th class="clicavel" onclick="ordenar('dataAbertura')">Abertura <span id="seta-dataAbertura">▼</span></th>
+                <th>Fechamento</th>
+                <th class="clicavel" onclick="ordenar('valorInicial')">Vlr. Inicial <span id="seta-valorInicial"></span></th>
+                <th class="clicavel" onclick="ordenar('totalVendas')">Total Vendas <span id="seta-totalVendas"></span></th>
+                <th class="clicavel" onclick="ordenar('qtdVendas')">Qtd. Vendas <span id="seta-qtdVendas"></span></th>
+                <th class="clicavel" onclick="ordenar('valorContado')">Contado <span id="seta-valorContado"></span></th>
+                <th class="clicavel" onclick="ordenar('diferenca')">Diferença <span id="seta-diferenca"></span></th>
+                <th>Status</th>
+                <th>PDF</th>
+            </tr>
+            </thead>
+            <tbody id="tabela-historico"></tbody>
+        </table>
+        <div id="sem-registros" class="sem-registros" style="display:none;">
+            Nenhum caixa fechado encontrado.
+        </div>
+    </div>
+</div>
+
+<!-- Modal de detalhe -->
+<div class="modal-overlay" id="modalDetalhe">
+    <div class="modal-detalhe">
+        <button class="btn-fechar-detalhe" onclick="fecharDetalhe()">✕ Fechar</button>
+        <button class="btn-exportar-pdf" id="btn-exportar-pdf">📄 Exportar PDF</button>
+        <h2>🔍 Detalhes do Caixa <span id="det-id"></span></h2>
+
+        <div class="detalhe-secao">
+            <h3>Turno</h3>
+            <div class="detalhe-linha"><span>Operador</span>      <span id="det-operador"></span></div>
+            <div class="detalhe-linha"><span>Abertura</span>      <span id="det-abertura"></span></div>
+            <div class="detalhe-linha"><span>Fechamento</span>    <span id="det-fechamento"></span></div>
+            <div class="detalhe-linha"><span>Valor Inicial</span> <span id="det-inicial"></span></div>
+        </div>
+
+        <div class="detalhe-secao">
+            <h3>Vendas</h3>
+            <div class="detalhe-linha"><span>Qtd. Vendas</span>   <span id="det-qtd-vendas"></span></div>
+            <div class="detalhe-linha"><span>Total Vendido</span> <span id="det-total-vendas"></span></div>
+            <div class="detalhe-linha"><span>💵 Dinheiro</span>   <span id="det-dinheiro"></span></div>
+            <div class="detalhe-linha"><span>💳 Cartão</span>     <span id="det-cartao"></span></div>
+            <div class="detalhe-linha"><span>📱 PIX</span>        <span id="det-pix"></span></div>
+            <div class="detalhe-linha"><span><span class="seta-sangria">▼</span> Sangrias</span>   <span id="det-sangrias"></span></div>
+            <div class="detalhe-linha"><span><span class="seta-suprimento">▲</span> Suprimentos</span><span id="det-suprimentos"></span></div>
+        </div>
+
+        <div class="detalhe-secao">
+            <h3>Serviços de Passagem</h3>
+            <div class="detalhe-linha"><span>🚌 Recarga JAE</span>     <span id="det-jae"></span></div>
+            <div class="detalhe-linha"><span>📱 Recarga Celular</span> <span id="det-celular"></span></div>
+            <div class="detalhe-linha"><span>📄 Pagamento Contas</span><span id="det-contas"></span></div>
+            <div class="detalhe-linha"><span>Total Serviços</span>     <span id="det-total-servicos"></span></div>
+            <div class="detalhe-linha"><span>💳 Pago no cartão/PIX</span><span id="det-rec-cartao"></span></div>
+            <div class="detalhe-linha"><span>💵 Em dinheiro na gaveta</span><span id="det-servicos-gaveta"></span></div>
+        </div>
+
+        <div class="detalhe-secao">
+            <h3>Conferência</h3>
+            <div class="detalhe-linha"><span>Valor Contado</span> <span id="det-contado"></span></div>
+            <div class="detalhe-linha"><span>Diferença</span>     <span id="det-diferenca"></span></div>
+        </div>
+
+        <div class="detalhe-secao">
+            <h3>Sangrias e Suprimentos do Turno</h3>
+            <div id="lista-movimentacoes-detalhe"></div>
+        </div>
+
+        <div class="detalhe-secao" id="secao-vendas-detalhe">
+            <h3>Relatório de Vendas do Turno</h3>
+            <div id="lista-vendas-detalhe"></div>
+        </div>
+    </div>
+</div>
+
+<script src="toast.js"></script>
+<script src="nav.js"></script>
+<script src="jspdf.umd.min.js"></script>
+<script>
+    if (!sessionStorage.getItem('perfil')) { window.location.href = 'index.html'; }
+
+    const API_CAIXA = "http://localhost:8080/api/caixa";
+
+    let todosResumos      = [];
+    let colunaOrdem       = "dataAbertura";
+    let ordemAscendente   = false;
+    let caixaIdAtual      = null; // caixa aberto no modal de detalhe (p/ exportar PDF)
+
+    const SETAS = ["caixaId","operador","dataAbertura","valorInicial","totalVendas","qtdVendas","valorContado","diferenca"];
+
+    function ordenar(coluna) {
+        if (colunaOrdem === coluna) {
+            ordemAscendente = !ordemAscendente;
+        } else {
+            colunaOrdem     = coluna;
+            ordemAscendente = coluna === "operador";
+        }
+        SETAS.forEach(c => {
+            const el = document.getElementById("seta-" + c);
+            if (el) el.textContent = c === colunaOrdem ? (ordemAscendente ? "▲" : "▼") : "";
+        });
+        renderTabela(todosResumos);
+    }
+    window.ordenar = ordenar;
+
+    async function carregarHistorico() {
+        try {
+            const resp   = await fetch(`${API_CAIXA}/fechados`);
+            const caixas = await resp.json();
+
+            if (caixas.length === 0) {
+                document.getElementById("sem-registros").style.display = "block";
+                return;
+            }
+
+            const resumos = await Promise.all(
+                caixas.map(c => fetch(`${API_CAIXA}/${c.id}/resumo`).then(r => r.json()))
+            );
+
+            // Calcula diferença e adiciona como campo para ordenar
+            todosResumos = resumos.map(r => {
+                // Serviços pagos no cartão/PIX constam na máquina mas não entram na gaveta
+                const servicosGaveta = Math.max((r.totalRecargas || 0) - (r.recargasCartao || 0), 0);
+                const esperado       = (r.valorInicial || 0) + (r.totalDinheiro || 0)
+                    - (r.totalSangrias || 0) + (r.totalSuprimentos || 0) + servicosGaveta;
+                r.diferenca          = (r.valorContado || 0) - esperado;
+                return r;
+            });
+
+            renderTabela(todosResumos);
+
+        } catch (erro) {
+            console.error("Erro ao carregar histórico:", erro);
+        }
+    }
+
+    function renderTabela(resumos) {
+        // Ordena
+        const sorted = [...resumos].sort((a, b) => {
+            let va = a[colunaOrdem] ?? "";
+            let vb = b[colunaOrdem] ?? "";
+            if (typeof va === "string") {
+                const cmp = va.localeCompare(vb);
+                return ordemAscendente ? cmp : -cmp;
+            }
+            return ordemAscendente ? va - vb : vb - va;
+        });
+
+        const tbody = document.getElementById("tabela-historico");
+        tbody.innerHTML = "";
+
+        let ultimoDia = null;
+
+        sorted.forEach(r => {
+            const diaDaLinha = r.dataAbertura ? r.dataAbertura.split("T")[0] : null;
+
+            // Separador de dia — só quando ordenado por data
+            if (colunaOrdem === "dataAbertura" && diaDaLinha && diaDaLinha !== ultimoDia) {
+                ultimoDia = diaDaLinha;
+                const dataBr = new Date(diaDaLinha + "T12:00:00").toLocaleDateString("pt-BR", {
+                    weekday: "long", day: "2-digit", month: "long", year: "numeric"
+                });
+                tbody.innerHTML += `
+                    <tr class="tr-separador-dia">
+                        <td colspan="11">📅 ${dataBr.charAt(0).toUpperCase() + dataBr.slice(1)}</td>
+                    </tr>`;
+            }
+
+            const sinal     = r.diferenca > 0 ? "+" : "";
+            const classeDif = r.diferenca === 0 ? "diferenca-zero"
+                            : r.diferenca  >  0 ? "diferenca-sobra"
+                            :                      "diferenca-negativa";
+
+            tbody.innerHTML += `
+                <tr onclick="abrirDetalhe(${r.caixaId})" style="cursor:pointer;">
+                    <td>#${r.caixaId}</td>
+                    <td>${r.operador || "-"}</td>
+                    <td>${fmt(r.dataAbertura)}</td>
+                    <td>${fmt(r.dataFechamento)}</td>
+                    <td>R$ ${(r.valorInicial  || 0).toFixed(2)}</td>
+                    <td style="color:var(--green); font-weight:700;">R$ ${(r.totalVendas   || 0).toFixed(2)}</td>
+                    <td style="text-align:center;">${r.qtdVendas || 0}</td>
+                    <td>R$ ${(r.valorContado  || 0).toFixed(2)}</td>
+                    <td class="${classeDif}">${sinal}R$ ${Math.abs(r.diferenca).toFixed(2)}</td>
+                    <td><span class="badge-fechado">Fechado</span></td>
+                    <td><button class="btn-pdf-linha" onclick="exportarPdfTurno(${r.caixaId}, event)" title="Exportar resumo do turno em PDF">📄</button></td>
+                </tr>`;
+        });
+    }
+
+    async function abrirDetalhe(id) {
+        try {
+            const resp = await fetch(`${API_CAIXA}/${id}/resumo`);
+            const r = await resp.json();
+
+            const totalServicos  = r.totalRecargas || 0;
+            const servicosGaveta = Math.max(totalServicos - (r.recargasCartao || 0), 0);
+            const esperado = r.valorInicial + (r.totalDinheiro || 0)
+                - (r.totalSangrias || 0) + (r.totalSuprimentos || 0) + servicosGaveta;
+            const diferenca = (r.valorContado || 0) - esperado;
+            const sinal = diferenca > 0 ? "+" : "";
+            const classeDif = diferenca === 0 ? "diferenca-zero"
+                : diferenca  >  0 ? "diferenca-sobra"
+                    :                   "diferenca-negativa";
+
+            document.getElementById("det-id").innerText             = `#${r.caixaId}`;
+            document.getElementById("det-operador").innerText       = r.operador || "-";
+            document.getElementById("det-abertura").innerText       = fmt(r.dataAbertura);
+            document.getElementById("det-fechamento").innerText     = fmt(r.dataFechamento);
+            document.getElementById("det-inicial").innerText        = `R$ ${(r.valorInicial    || 0).toFixed(2)}`;
+            document.getElementById("det-qtd-vendas").innerText     = r.qtdVendas || 0;
+            document.getElementById("det-total-vendas").innerText   = `R$ ${(r.totalVendas     || 0).toFixed(2)}`;
+            document.getElementById("det-dinheiro").innerText       = `R$ ${(r.totalDinheiro   || 0).toFixed(2)}`;
+            document.getElementById("det-cartao").innerText         = `R$ ${(r.totalCartao     || 0).toFixed(2)}`;
+            document.getElementById("det-pix").innerText            = `R$ ${(r.totalPix        || 0).toFixed(2)}`;
+            document.getElementById("det-sangrias").innerText       = `R$ ${(r.totalSangrias    || 0).toFixed(2)}`;
+            document.getElementById("det-suprimentos").innerText    = `R$ ${(r.totalSuprimentos || 0).toFixed(2)}`;
+            document.getElementById("det-jae").innerText            = `R$ ${(r.recargasJae     || 0).toFixed(2)}`;
+            document.getElementById("det-celular").innerText        = `R$ ${(r.recargasCelular || 0).toFixed(2)}`;
+            document.getElementById("det-contas").innerText         = `R$ ${(r.recargasContas  || 0).toFixed(2)}`;
+            document.getElementById("det-total-servicos").innerText  = `R$ ${totalServicos.toFixed(2)}`;
+            document.getElementById("det-rec-cartao").innerText      = `R$ ${(r.recargasCartao || 0).toFixed(2)}`;
+            document.getElementById("det-servicos-gaveta").innerText = `R$ ${servicosGaveta.toFixed(2)}`;
+            document.getElementById("det-contado").innerText        = `R$ ${(r.valorContado    || 0).toFixed(2)}`;
+
+            const elDif = document.getElementById("det-diferenca");
+            elDif.innerText = `${sinal}R$ ${Math.abs(diferenca).toFixed(2)}`;
+            elDif.className = classeDif;
+
+            caixaIdAtual = r.caixaId;
+            document.getElementById("modalDetalhe").style.display = "flex";
+
+            // Carrega lista de vendas e movimentações do turno
+            carregarVendasDoTurno(r.caixaId, r.dataAbertura, r.dataFechamento);
+            carregarMovimentacoesDoTurno(r.caixaId, r.dataAbertura, r.dataFechamento);
+
+        } catch (erro) {
+            console.error("Erro ao carregar detalhe:", erro);
+        }
+    }
+
+    // Busca as vendas de um turno (compartilhada entre a tela e o PDF).
+    // Mostra SÓ as vendas deste caixa: pelo caixaId quando existir (vendas novas),
+    // senão pela janela de horário do turno (vendas antigas, sem vínculo).
+    async function buscarVendasDoTurno(caixaId, dataAbertura, dataFechamento) {
+        const inicio = dataAbertura ? dataAbertura.split("T")[0] : null;
+        if (!inicio) return [];
+        const fim = dataFechamento ? dataFechamento.split("T")[0] : new Date().toISOString().split("T")[0];
+
+        let vendas = await fetch(`http://localhost:8080/api/vendas/periodo?inicio=${inicio}&fim=${fim}`).then(r => r.json());
+        if (!Array.isArray(vendas)) vendas = [];
+
+        const iniMs = new Date(dataAbertura).getTime();
+        const fimMs = dataFechamento ? new Date(dataFechamento).getTime() : Date.now();
+        return vendas
+            .filter(v => v.caixaId != null
+                ? v.caixaId === caixaId
+                : (new Date(v.dataHora).getTime() >= iniMs && new Date(v.dataHora).getTime() <= fimMs))
+            .sort((a, b) => new Date(a.dataHora) - new Date(b.dataHora));
+    }
+
+    async function carregarVendasDoTurno(caixaId, dataAbertura, dataFechamento) {
+        const lista = document.getElementById("lista-vendas-detalhe");
+        lista.innerHTML = '<p style="color:var(--text-dim); font-size:13px;">Carregando vendas...</p>';
+
+        try {
+            if (!dataAbertura) { lista.innerHTML = '<p style="color:var(--text-dim); font-size:13px;">Período indisponível.</p>'; return; }
+
+            const vendas = await buscarVendasDoTurno(caixaId, dataAbertura, dataFechamento);
+
+            if (!vendas.length) {
+                lista.innerHTML = '<p style="color:var(--text-dim); font-size:13px;">Nenhuma venda registrada neste turno.</p>';
+                return;
+            }
+
+            const pagoLabel = { DINHEIRO: '💵 Dinheiro', PIX: '📱 PIX', CREDITO: '💳 Crédito', DEBITO: '💳 Débito' };
+
+            lista.innerHTML = vendas.map(v => {
+                const hora  = v.dataHora ? new Date(v.dataHora).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }) : "-";
+                const itens = (v.itens || []).map(i => `${i.quantidade}× ${i.descricao || i.produto?.nome || "Item"}`).join(", ");
+                const forma = pagoLabel[v.formaPagamento] || v.formaPagamento || "—";
+                return `
+                    <div class="venda-turno-linha">
+                        <div class="venda-turno-hora">${hora}</div>
+                        <div class="venda-turno-itens">${itens || "—"}</div>
+                        <div class="venda-turno-forma">${forma}</div>
+                        <div class="venda-turno-valor">R$ ${(v.valorTotal || 0).toFixed(2)}</div>
+                    </div>`;
+            }).join("");
+
+        } catch (e) {
+            lista.innerHTML = '<p style="color:var(--red); font-size:13px;">Erro ao carregar vendas.</p>';
+        }
+    }
+
+    async function buscarMovimentacoesDoTurno(caixaId, dataAbertura, dataFechamento) {
+        let movs = await fetch("http://localhost:8080/api/vendas/sangrias").then(r => r.json());
+        if (!Array.isArray(movs)) movs = [];
+
+        // Filtra pelo caixa do turno; movimentações antigas (sem vínculo) caem na janela de horário
+        const iniMs = dataAbertura   ? new Date(dataAbertura).getTime()   : 0;
+        const fimMs = dataFechamento ? new Date(dataFechamento).getTime() : Date.now();
+        return movs
+            .filter(m => m.caixa?.id != null
+                ? m.caixa.id === caixaId
+                : (new Date(m.dataHora).getTime() >= iniMs && new Date(m.dataHora).getTime() <= fimMs))
+            .sort((a, b) => new Date(a.dataHora) - new Date(b.dataHora));
+    }
+
+    async function carregarMovimentacoesDoTurno(caixaId, dataAbertura, dataFechamento) {
+        const lista = document.getElementById("lista-movimentacoes-detalhe");
+        lista.innerHTML = '<p style="color:var(--text-dim); font-size:13px;">Carregando...</p>';
+
+        try {
+            const movs = await buscarMovimentacoesDoTurno(caixaId, dataAbertura, dataFechamento);
+
+            if (!movs.length) {
+                lista.innerHTML = '<p style="color:var(--text-dim); font-size:13px;">Nenhuma sangria ou suprimento neste turno.</p>';
+                return;
+            }
+
+            lista.innerHTML = movs
+                .map(m => {
+                    const ehSup = m.tipo === "SUPRIMENTO";
+                    const hora  = m.dataHora ? new Date(m.dataHora).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }) : "-";
+                    return `
+                        <div class="venda-turno-linha">
+                            <div class="venda-turno-hora">${hora}</div>
+                            <div class="venda-turno-itens">${ehSup ? '<span class="seta-suprimento">▲</span> Suprimento' : '<span class="seta-sangria">▼</span> Sangria'} — ${m.motivo || "(sem motivo)"}</div>
+                            <div class="venda-turno-valor" style="color:${ehSup ? "var(--green)" : "var(--red)"};">
+                                ${ehSup ? "+" : "−"} R$ ${(m.valor || 0).toFixed(2)}
+                            </div>
+                        </div>`;
+                }).join("");
+
+        } catch (e) {
+            lista.innerHTML = '<p style="color:var(--red); font-size:13px;">Erro ao carregar movimentações.</p>';
+        }
+    }
+
+    function fecharDetalhe() {
+        document.getElementById("modalDetalhe").style.display = "none";
+    }
+
+    // =========================================================================
+    // EXPORTAR PDF DO TURNO (resumo, sem o detalhamento das vendas)
+    // =========================================================================
+
+    async function exportarPdfTurno(id, event) {
+        if (event) event.stopPropagation(); // não abre o modal ao clicar no botão da linha
+        try {
+            const r = await fetch(`${API_CAIXA}/${id}/resumo`).then(resp => resp.json());
+            const [movs, vendas] = await Promise.all([
+                buscarMovimentacoesDoTurno(r.caixaId, r.dataAbertura, r.dataFechamento),
+                buscarVendasDoTurno(r.caixaId, r.dataAbertura, r.dataFechamento),
+            ]);
+            gerarPdfTurno(r, movs, vendas);
+        } catch (erro) {
+            console.error("Erro ao exportar PDF:", erro);
+            showToast("Erro ao gerar o PDF do turno.", "erro");
+        }
+    }
+    window.exportarPdfTurno = exportarPdfTurno;
+
+    function gerarPdfTurno(r, movs, vendas) {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({ unit: "mm", format: "a4", orientation: "portrait" });
+
+        const W  = doc.internal.pageSize.getWidth();
+        const H  = doc.internal.pageSize.getHeight();
+        const ML = 14;
+        const MR = 14;
+        const CW = W - ML - MR;
+        let y = 14;
+
+        const CINZA  = [60, 60, 60];    // rótulos — bem escuro p/ leitura no celular
+        const PRETO  = [0, 0, 0];       // valores — preto puro
+        const CLARO  = [170, 170, 170]; // linhas finas
+        const RODAPE = [110, 110, 110];
+        const VERDE  = [12, 130, 60];
+        const VERM   = [200, 40, 40];
+
+        // Mesmos cálculos do modal de detalhe
+        const totalServicos  = r.totalRecargas || 0;
+        const servicosGaveta = Math.max(totalServicos - (r.recargasCartao || 0), 0);
+        const esperado  = (r.valorInicial || 0) + (r.totalDinheiro || 0)
+            - (r.totalSangrias || 0) + (r.totalSuprimentos || 0) + servicosGaveta;
+        const diferenca = (r.valorContado || 0) - esperado;
+
+        const brl = v => `R$ ${(v || 0).toFixed(2)}`;
+
+        function checarPagina(necessario) {
+            if (y + necessario > H - 16) {
+                doc.addPage();
+                y = 14;
+            }
+        }
+
+        function secaoTitulo(titulo) {
+            checarPagina(16);
+            doc.setFontSize(11);
+            doc.setFont("helvetica", "bold");
+            doc.setTextColor(...CINZA);
+            doc.text(titulo.toUpperCase(), ML, y);
+            y += 1.5;
+            doc.setDrawColor(...CLARO);
+            doc.line(ML, y, ML + CW, y);
+            y += 7;
+        }
+
+        // label → valor; o rótulo é truncado p/ nunca colidir com o valor à direita
+        function linha(label, valor, opts = {}) {
+            const size = opts.size || 13;
+            checarPagina(size * 0.7 + 3);
+            const valorStr = String(valor);
+
+            doc.setFont("helvetica", opts.bold ? "bold" : "normal");
+            doc.setFontSize(size);
+            const wValor   = doc.getStringUnitWidth(valorStr) * size / doc.internal.scaleFactor;
+            const maxLabel = CW - wValor - 6;
+
+            doc.setFont("helvetica", "normal");
+            doc.setTextColor(...CINZA);
+            let lbl = String(label);
+            if (doc.getStringUnitWidth(lbl) * size / doc.internal.scaleFactor > maxLabel) {
+                while (lbl.length > 1 && doc.getStringUnitWidth(lbl + "...") * size / doc.internal.scaleFactor > maxLabel) {
+                    lbl = lbl.slice(0, -1);
+                }
+                lbl = lbl.trimEnd() + "...";
+            }
+            doc.text(lbl, ML, y);
+
+            doc.setFont("helvetica", opts.bold ? "bold" : "normal");
+            doc.setTextColor(...(opts.cor || PRETO));
+            doc.text(valorStr, W - MR, y, { align: "right" });
+            y += size * 0.62 + 0.5;
+        }
+
+        // Cabeçalho
+        doc.setFontSize(22);
+        doc.setFont("helvetica", "bold");
+        doc.setTextColor(...PRETO);
+        doc.text("Unicka Digital", ML, y);
+
+        doc.setFontSize(11);
+        doc.setFont("helvetica", "normal");
+        doc.setTextColor(...CINZA);
+        doc.text(`Gerado em: ${new Date().toLocaleString("pt-BR")}`, W - MR, y, { align: "right" });
+
+        y += 7;
+        doc.setFontSize(14);
+        doc.setTextColor(...CINZA);
+        doc.text(`Resumo do Turno  #${r.caixaId}`, ML, y);
+        y += 3;
+        doc.setDrawColor(50, 50, 50);
+        doc.setLineWidth(0.5);
+        doc.line(ML, y, ML + CW, y);
+        doc.setLineWidth(0.2);
+        y += 10;
+
+        secaoTitulo("Turno");
+        linha("Operador",      r.operador || "-");
+        linha("Abertura",      fmt(r.dataAbertura));
+        linha("Fechamento",    fmt(r.dataFechamento));
+        linha("Valor Inicial", brl(r.valorInicial));
+        y += 3;
+
+        secaoTitulo("Vendas");
+        linha("Qtd. Vendas",   r.qtdVendas || 0);
+        linha("Total Vendido", brl(r.totalVendas), { bold: true });
+        linha("Dinheiro",      brl(r.totalDinheiro));
+        linha("Cartao",        brl(r.totalCartao));
+        linha("PIX",           brl(r.totalPix));
+        linha("Sangrias",      brl(r.totalSangrias));
+        linha("Suprimentos",   brl(r.totalSuprimentos));
+        y += 3;
+
+        secaoTitulo("Servicos de Passagem");
+        linha("Recarga JAE",           brl(r.recargasJae));
+        linha("Recarga Celular",       brl(r.recargasCelular));
+        linha("Pagamento Contas",      brl(r.recargasContas));
+        linha("Total Servicos",        brl(totalServicos), { bold: true });
+        linha("Pago no cartao/PIX",    brl(r.recargasCartao));
+        linha("Em dinheiro na gaveta", brl(servicosGaveta));
+        y += 3;
+
+        secaoTitulo("Conferencia");
+        linha("Valor Contado", brl(r.valorContado));
+        const sinal = diferenca > 0 ? "+" : diferenca < 0 ? "-" : "";
+        linha("Diferenca", `${sinal}${brl(Math.abs(diferenca))}`, {
+            bold: true,
+            cor: diferenca === 0 ? VERDE : diferenca > 0 ? VERDE : VERM,
+        });
+        y += 3;
+
+        secaoTitulo("Sangrias e Suprimentos do Turno");
+        if (!movs.length) {
+            checarPagina(9);
+            doc.setFontSize(12);
+            doc.setFont("helvetica", "normal");
+            doc.setTextColor(...CINZA);
+            doc.text("Nenhuma sangria ou suprimento neste turno.", ML, y);
+            y += 8;
+        } else {
+            movs.forEach(m => {
+                const ehSup = m.tipo === "SUPRIMENTO";
+                const hora  = m.dataHora
+                    ? new Date(m.dataHora).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })
+                    : "-";
+                linha(`${hora}  ${ehSup ? "Suprimento" : "Sangria"} - ${m.motivo || "(sem motivo)"}`,
+                    `${ehSup ? "+" : "-"} ${brl(m.valor)}`,
+                    { cor: ehSup ? VERDE : VERM, size: 11 });
+            });
+        }
+        y += 3;
+
+        // ---------------------------------------------------------------------
+        // Relatório de vendas detalhado do turno (venda por venda)
+        // ---------------------------------------------------------------------
+        checarPagina(38); // mantém o título junto do cabeçalho + 1ª linha da tabela
+        secaoTitulo("Relatorio de Vendas do Turno");
+
+        if (!vendas || !vendas.length) {
+            checarPagina(9);
+            doc.setFontSize(12);
+            doc.setFont("helvetica", "normal");
+            doc.setTextColor(...CINZA);
+            doc.text("Nenhuma venda registrada neste turno.", ML, y);
+            y += 8;
+        } else {
+            const FORMA = { DINHEIRO: "Dinheiro", CREDITO: "Credito", DEBITO: "Debito", PIX: "PIX" };
+            const cols  = [
+                { label: "HORA",  w: CW * 0.13 },
+                { label: "ITENS", w: CW * 0.52 },
+                { label: "PGTO",  w: CW * 0.18 },
+                { label: "VALOR", w: CW * 0.17, align: "right" },
+            ];
+            const lineH = 8;
+
+            const cabecalhoVendas = () => {
+                doc.setFillColor(225, 225, 225);
+                doc.rect(ML, y, CW, lineH, "F");
+                doc.setFontSize(9);
+                doc.setFont("helvetica", "bold");
+                doc.setTextColor(40, 40, 40);
+                let cx = ML;
+                cols.forEach(col => {
+                    const align = col.align || "left";
+                    const tx = align === "right" ? cx + col.w - 2 : cx + 2;
+                    doc.text(col.label, tx, y + 5.5, { align });
+                    cx += col.w;
+                });
+                y += lineH;
+            };
+
+            checarPagina(lineH * 2);
+            cabecalhoVendas();
+
+            let alt = 0;
+            vendas.forEach(v => {
+                if (y + lineH > H - 16) { doc.addPage(); y = 14; cabecalhoVendas(); alt = 0; }
+                if (alt % 2 === 1) { doc.setFillColor(245, 245, 245); doc.rect(ML, y, CW, lineH, "F"); }
+
+                const hora  = v.dataHora ? new Date(v.dataHora).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }) : "-";
+                const itens = (v.itens || []).map(i => `${i.quantidade}x ${i.descricao || i.produto?.nome || "Item"}`).join(", ") || "-";
+                const forma = FORMA[v.formaPagamento] || v.formaPagamento || "-";
+                const dados = [hora, itens, forma, brl(v.valorTotal)];
+
+                doc.setFontSize(10);
+                doc.setFont("helvetica", "normal");
+                doc.setTextColor(...PRETO);
+                let cx = ML;
+                dados.forEach((cel, ci) => {
+                    const col   = cols[ci];
+                    const align = col.align || "left";
+                    const tx    = align === "right" ? cx + col.w - 2 : cx + 2;
+                    const maxW  = col.w - 4;
+                    let texto   = String(cel);
+                    if (doc.getStringUnitWidth(texto) * 10 / doc.internal.scaleFactor > maxW) {
+                        texto = texto.substring(0, Math.max(1, Math.floor(maxW / 2.4))) + "...";
+                    }
+                    doc.text(texto, tx, y + 5.5, { align });
+                    cx += col.w;
+                });
+                y += lineH;
+                alt++;
+            });
+
+            // Linha de total
+            if (y + lineH > H - 16) { doc.addPage(); y = 14; }
+            const totalVendas = vendas.reduce((s, v) => s + (v.valorTotal || 0), 0);
+            doc.setFillColor(232, 232, 232);
+            doc.rect(ML, y, CW, lineH, "F");
+            doc.setFontSize(10);
+            doc.setFont("helvetica", "bold");
+            doc.setTextColor(...PRETO);
+            doc.text(`${vendas.length} venda(s)`, ML + 2, y + 5.5);
+            doc.text(`Total: ${brl(totalVendas)}`, W - MR - 2, y + 5.5, { align: "right" });
+            y += lineH;
+        }
+
+        // Rodapé em todas as páginas
+        const n = doc.internal.getNumberOfPages();
+        for (let i = 1; i <= n; i++) {
+            doc.setPage(i);
+            doc.setFontSize(9);
+            doc.setTextColor(...RODAPE);
+            doc.text(`Unicka Digital PDV  -  Pagina ${i} de ${n}`, W / 2, H - 6, { align: "center" });
+        }
+
+        const dataArquivo = r.dataAbertura ? r.dataAbertura.split("T")[0] : new Date().toISOString().split("T")[0];
+        doc.save(`turno-${r.caixaId}-${dataArquivo}.pdf`);
+    }
+
+    document.getElementById("btn-exportar-pdf").addEventListener("click", () => {
+        if (caixaIdAtual != null) exportarPdfTurno(caixaIdAtual);
+    });
+
+    function fmt(dataISO) {
+        if (!dataISO) return "-";
+        return new Date(dataISO).toLocaleString("pt-BR");
+    }
+
+    document.addEventListener("keydown", e => {
+        if (e.key === "Escape") fecharDetalhe();
+    });
+
+    carregarHistorico();
+</script>
+</body>
+</html>

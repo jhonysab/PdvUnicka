@@ -1,0 +1,56 @@
+/* style-historico-caixa.css — estilos exclusivos do histórico de caixas */
+
+.container { max-width: 1200px; }
+
+.tabela-wrapper-scroll { overflow-x: auto; }
+
+/* ── Modal de detalhe ──────────────────────────────────────────────── */
+
+.modal-detalhe {
+    background: var(--bg-surface); border: 1px solid var(--border-light);
+    border-radius: var(--radius-lg); padding: 32px; width: 100%; max-width: 560px;
+    color: var(--text); position: relative; box-shadow: 0 16px 48px rgba(0,0,0,0.5);
+    max-height: 88vh; overflow-y: auto;
+}
+
+/* Separador de dia na tabela */
+.tr-separador-dia td {
+    background: var(--bg-body); color: var(--text-dim);
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.08em; padding: 6px 14px;
+    border-top: 2px solid var(--border); border-bottom: none;
+}
+.modal-detalhe h2 { margin-bottom: 20px; font-size: 1.2rem; }
+
+.detalhe-secao    { margin-top: 16px; }
+.detalhe-secao h3 { font-size: 0.8rem; text-transform: uppercase; color: var(--text-dim); margin-bottom: 8px; letter-spacing: .05em; }
+
+.detalhe-linha {
+    display: flex; justify-content: space-between;
+    padding: 7px 0; border-bottom: 1px solid var(--border); font-size: 0.9rem;
+}
+.detalhe-linha span:first-child { color: var(--text-muted); }
+.detalhe-linha span:last-child  { font-weight: 600; }
+
+.btn-fechar-detalhe {
+    position: absolute; top: 16px; right: 16px;
+    background: var(--bg-surface-alt); border: 1px solid var(--border);
+    color: var(--text-muted); border-radius: var(--radius); padding: 6px 12px;
+    cursor: pointer; font-family: var(--font); transition: all 0.2s;
+}
+.btn-fechar-detalhe:hover { background: var(--bg-hover); color: var(--text); border-color: var(--border-light); }
+
+.btn-exportar-pdf {
+    position: absolute; top: 16px; right: 110px;
+    background: var(--bg-surface-alt); border: 1px solid var(--red);
+    color: var(--red); border-radius: var(--radius); padding: 6px 12px;
+    cursor: pointer; font-family: var(--font); transition: all 0.2s;
+}
+.btn-exportar-pdf:hover { background: rgba(248,113,113,0.1); border-color: var(--red); }
+
+.btn-pdf-linha {
+    background: var(--bg-surface-alt); border: 1px solid var(--red);
+    color: var(--red); border-radius: var(--radius); padding: 4px 10px;
+    cursor: pointer; font-family: var(--font); font-size: 13px; transition: all 0.2s;
+}
+.btn-pdf-linha:hover { background: rgba(248,113,113,0.1); border-color: var(--red); }

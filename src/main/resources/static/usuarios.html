@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unicka Digital — Usuários</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="style-global.css">
+    <link rel="stylesheet" href="style-usuarios.css">
+</head>
+<body>
+
+<header class="header-dashboard">
+    <div class="header-marca">
+        <span class="header-logo">U</span>
+        <div>
+            <h1>Unicka Digital</h1>
+            <p class="header-subtitulo">Gerenciamento de Usuários</p>
+        </div>
+    </div>
+    <nav class="header-nav" id="nav-principal">
+        <!-- Gerado pelo nav.js -->
+    </nav>
+</header>
+
+<main class="container">
+    <!-- Formulário de cadastro -->
+    <section class="card card-form">
+        <h2 class="card-titulo">Cadastrar Novo Usuário</h2>
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="inp-username">Usuário</label>
+                <input type="text" id="inp-username" placeholder="Nome de usuário" autocomplete="off">
+            </div>
+            <div class="form-group">
+                <label for="inp-senha">Senha</label>
+                <input type="password" id="inp-senha" placeholder="Senha">
+            </div>
+            <div class="form-group">
+                <label for="sel-perfil">Perfil</label>
+                <select id="sel-perfil">
+                    <option value="FUNCIONARIO">Funcionário</option>
+                    <option value="ADMIN">Administrador</option>
+                </select>
+            </div>
+            <div class="form-group form-group-btn">
+                <button class="btn-primary" id="btn-cadastrar">+ Cadastrar</button>
+            </div>
+        </div>
+        <p class="form-msg" id="form-msg"></p>
+    </section>
+
+    <!-- Tabela de usuários -->
+    <section class="card">
+        <h2 class="card-titulo">Usuários Cadastrados</h2>
+        <div class="tabela-wrapper">
+            <table class="tabela">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Usuário</th>
+                    <th>Perfil</th>
+                    <th>Ações</th>
+                </tr>
+                </thead>
+                <tbody id="tbody-usuarios">
+                <tr><td colspan="4" class="td-vazio">Carregando...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+
+<!-- Modal Editar -->
+<div class="modal-overlay" id="modal-editar">
+    <div class="modal">
+        <h3 class="modal-titulo">Editar Usuário</h3>
+        <p class="modal-sub" id="modal-username-label"></p>
+        <div class="form-group">
+            <label for="edit-perfil">Perfil</label>
+            <select id="edit-perfil">
+                <option value="FUNCIONARIO">Funcionário</option>
+                <option value="ADMIN">Administrador</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="edit-senha">Nova Senha <span class="text-dim">(deixe vazio para manter)</span></label>
+            <input type="password" id="edit-senha" placeholder="Nova senha">
+        </div>
+        <div class="modal-acoes">
+            <button class="btn-cancel" id="btn-cancel-edit">Cancelar</button>
+            <button class="btn-primary" id="btn-salvar-edit">Salvar</button>
+        </div>
+        <p class="form-msg" id="edit-msg"></p>
+    </div>
+</div>
+
+<!-- Modal Excluir -->
+<div class="modal-overlay" id="modal-excluir">
+    <div class="modal">
+        <h3 class="modal-titulo modal-titulo-danger">Excluir Usuário</h3>
+        <p class="modal-sub">Tem certeza que deseja excluir o usuário <strong id="excluir-nome"></strong>?</p>
+        <p class="modal-aviso">Esta ação não pode ser desfeita.</p>
+        <div class="modal-acoes">
+            <button class="btn-cancel" id="btn-cancel-del">Cancelar</button>
+            <button class="btn-danger" id="btn-confirmar-del">Excluir</button>
+        </div>
+    </div>
+</div>
+
+<script src="toast.js"></script>
+<script src="nav.js"></script>
+<script src="script-usuarios.js"></script>
+</body>
+</html>

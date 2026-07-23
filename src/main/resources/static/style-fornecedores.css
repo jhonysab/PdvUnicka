@@ -1,0 +1,174 @@
+/* ============================================================
+   FORNECEDORES — estilos específicos da página
+   ============================================================ */
+
+.filtro-fornecedor {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+}
+
+.filtro-fornecedor .input-pesquisa {
+    flex: 1;
+    min-width: 220px;
+}
+
+.filtro-fornecedor select {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    padding: 10px 14px;
+    font-size: 14px;
+    cursor: pointer;
+    min-width: 220px;
+}
+
+.filtro-fornecedor select:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+/* Card de fornecedor */
+.card-fornecedor {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 20px 24px;
+    margin-bottom: 16px;
+    transition: border-color 0.2s;
+}
+
+.card-fornecedor:hover {
+    border-color: var(--accent);
+}
+
+.card-fornecedor-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+}
+
+.card-fornecedor-nome {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.card-fornecedor-meta {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.badge-pagamento {
+    background: rgba(79, 142, 247, 0.12);
+    color: var(--accent);
+    border: 1px solid rgba(79, 142, 247, 0.25);
+    border-radius: 20px;
+    padding: 3px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.badge-qtd-produtos {
+    background: rgba(155, 109, 255, 0.12);
+    color: var(--purple);
+    border: 1px solid rgba(155, 109, 255, 0.25);
+    border-radius: 20px;
+    padding: 3px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.card-fornecedor-contatos {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+}
+
+.contato-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+.contato-item .icone {
+    font-size: 14px;
+}
+
+/* Tabela de produtos dentro do card */
+.card-fornecedor-produtos {
+    border-top: 1px solid var(--border);
+    padding-top: 12px;
+}
+
+.card-fornecedor-produtos h4 {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 10px;
+}
+
+.produto-fornecedor-linha {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 7px 10px;
+    background: var(--bg-body);
+    border-radius: var(--radius);
+    margin-bottom: 5px;
+    font-size: 13px;
+}
+
+.produto-fornecedor-nome {
+    font-weight: 500;
+    color: var(--text);
+    flex: 1;
+}
+
+.produto-fornecedor-info {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    white-space: nowrap;
+}
+
+.produto-fornecedor-preco {
+    color: var(--green);
+    font-weight: 600;
+}
+
+.produto-fornecedor-estoque {
+    color: var(--text-muted);
+    font-size: 12px;
+}
+
+/* Cards de resumo - reutiliza .card do global mas override */
+.card-destaque p {
+    color: var(--yellow) !important;
+}
+
+/* Sem registros */
+.sem-registros {
+    text-align: center;
+    color: var(--text-dim);
+    padding: 48px 24px;
+    font-size: 15px;
+    line-height: 1.8;
+}

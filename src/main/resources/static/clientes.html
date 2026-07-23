@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clientes - Unicka Digital</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="style-global.css">
+    <link rel="stylesheet" href="style-clientes.css">
+</head>
+<body>
+
+<div class="container">
+
+    <header class="header-dashboard">
+        <div class="header-marca">
+            <span class="header-logo">U</span>
+            <div>
+                <h1>Unicka Digital</h1>
+                <p class="header-subtitulo">Cadastro de Clientes</p>
+            </div>
+        </div>
+        <nav class="header-nav" id="nav-principal">
+            <!-- Gerado pelo nav.js -->
+        </nav>
+    </header>
+
+    <!-- CARD RESUMO -->
+    <div class="dashboard-cards">
+        <div class="card">
+            <h3>Clientes Cadastrados</h3>
+            <p id="card-total-clientes">0</p>
+        </div>
+    </div>
+
+    <!-- FORMULÁRIO DE CADASTRO -->
+    <section class="secao-cadastro">
+        <h2>Dados do Cliente</h2>
+        <input type="hidden" id="clienteId">
+
+        <div class="form-grid">
+            <div class="input-group campo-largo">
+                <label for="clienteNome">Nome completo:</label>
+                <input id="clienteNome" placeholder="Nome do cliente">
+            </div>
+
+            <div class="input-group">
+                <label for="clienteCpf">CPF:</label>
+                <input id="clienteCpf" placeholder="000.000.000-00" maxlength="14" oninput="mascaraCPF(this)">
+            </div>
+
+            <div class="input-group">
+                <label for="clienteTelefone">Telefone:</label>
+                <input id="clienteTelefone" placeholder="(00) 00000-0000" maxlength="15" oninput="mascaraTelefone(this)">
+            </div>
+
+            <div class="input-group campo-largo">
+                <label for="clienteEndereco">Endereço:</label>
+                <input id="clienteEndereco" placeholder="Rua, número, bairro, cidade">
+            </div>
+        </div>
+
+        <div class="form-botoes">
+            <button id="btn-salvar-cliente" class="btn-salvar" onclick="salvarCliente()">Cadastrar Cliente</button>
+            <button id="btn-cancelar-edicao" class="btn-cancelar" onclick="cancelarEdicao()" style="display:none;">Cancelar</button>
+        </div>
+    </section>
+
+    <div class="divisor"></div>
+
+    <!-- LISTA DE CLIENTES -->
+    <section class="secao-lista">
+        <h2>Clientes</h2>
+        <input type="text" id="barra-pesquisa" class="input-pesquisa" placeholder="🔍 Pesquisar por nome, CPF ou telefone..." oninput="filtrarClientes()">
+
+        <table>
+            <thead>
+            <tr>
+                <th>Nome</th>
+                <th>CPF</th>
+                <th>Telefone</th>
+                <th>Endereço</th>
+                <th>Cadastro</th>
+                <th class="col-acoes">Ações</th>
+            </tr>
+            </thead>
+            <tbody id="tabela-clientes">
+            </tbody>
+        </table>
+
+        <div class="paginacao">
+            <button class="btn-pag" onclick="paginaAnterior()">Anterior</button>
+            <span id="info-paginas">Página 1 de 1</span>
+            <button class="btn-pag" onclick="proximaPagina()">Próxima</button>
+        </div>
+    </section>
+
+    <!-- HISTÓRICO DE COMPRAS DO CLIENTE -->
+    <section id="secao-historico-cliente" class="secao-lista secao-historico-cliente" style="display:none;">
+        <h2 id="titulo-historico-cliente">Histórico de Compras</h2>
+        <div id="lista-historico-cliente">
+            <p class="historico-cliente-vazia">Nenhuma compra encontrada.</p>
+        </div>
+    </section>
+</div>
+
+<script src="toast.js"></script>
+<script src="nav.js"></script>
+<script src="script-clientes.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatórios - Unicka Digital</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="style-global.css">
+    <link rel="stylesheet" href="style-relatorio.css">
+    <!-- jsPDF local: o Exportar PDF funciona mesmo sem internet -->
+    <script src="jspdf.umd.min.js"></script>
+</head>
+<body>
+
+<div class="container">
+
+    <header class="header-dashboard no-pdf">
+        <div class="header-marca">
+            <span class="header-logo">U</span>
+            <div>
+                <h1>Unicka Digital</h1>
+                <p class="header-subtitulo">Relatórios de Vendas</p>
+            </div>
+        </div>
+        <nav class="header-nav" id="nav-principal">
+            <!-- Gerado pelo nav.js -->
+        </nav>
+    </header>
+
+    <!-- FILTROS -->
+    <div class="filtros-container no-pdf">
+        <div class="filtro-grupo">
+            <label>Data Início:</label>
+            <input type="date" id="dataInicio">
+        </div>
+        <div class="filtro-grupo">
+            <label>Data Fim:</label>
+            <input type="date" id="dataFim">
+        </div>
+        <button class="btn-filtrar" onclick="filtrarRelatorios()">🔍 Filtrar</button>
+        <button class="btn-pdf" onclick="exportarParaPDF()">📄 Exportar PDF</button>
+    </div>
+
+    <!-- CONTEÚDO DO RELATÓRIO (exportado em PDF) -->
+    <div id="conteudo-relatorio">
+
+        <h2 class="titulo-relatorio">Relatório de Vendas — Unicka Digital</h2>
+        <p id="periodo-selecionado" class="periodo-texto">Período: Geral</p>
+
+        <!-- CARDS PRINCIPAIS -->
+        <div class="dashboard-cards">
+            <div class="card">
+                <h3>Vendas Realizadas</h3>
+                <p id="total-vendas-qtd">0</p>
+            </div>
+            <div class="card card-destaque">
+                <h3>Total Faturado</h3>
+                <p id="total-faturado-valor">R$ 0,00</p>
+            </div>
+            <div class="card">
+                <h3>Ticket Médio</h3>
+                <p id="ticket-medio">R$ 0,00</p>
+            </div>
+            <div class="card">
+                <h3>Horário de Pico</h3>
+                <p id="horario-pico" class="horario-pico-valor">--:--</p>
+            </div>
+        </div>
+
+        <!-- BREAKDOWN POR PAGAMENTO -->
+        <section class="secao-relatorio">
+            <h2>Faturamento por Forma de Pagamento</h2>
+            <div class="pagamento-grid" id="pagamento-grid">
+                <div class="pgto-card">
+                    <span class="pgto-icone">💵</span>
+                    <span class="pgto-label">Dinheiro</span>
+                    <span class="pgto-valor" id="pgto-dinheiro">R$ 0,00</span>
+                    <div class="pgto-barra-container"><div class="pgto-barra pgto-barra-dinheiro" id="pgto-barra-dinheiro"></div></div>
+                </div>
+                <div class="pgto-card">
+                    <span class="pgto-icone">💳</span>
+                    <span class="pgto-label">Crédito</span>
+                    <span class="pgto-valor" id="pgto-credito">R$ 0,00</span>
+                    <div class="pgto-barra-container"><div class="pgto-barra pgto-barra-credito" id="pgto-barra-credito"></div></div>
+                </div>
+                <div class="pgto-card">
+                    <span class="pgto-icone">💳</span>
+                    <span class="pgto-label">Débito</span>
+                    <span class="pgto-valor" id="pgto-debito">R$ 0,00</span>
+                    <div class="pgto-barra-container"><div class="pgto-barra pgto-barra-debito" id="pgto-barra-debito"></div></div>
+                </div>
+                <div class="pgto-card">
+                    <span class="pgto-icone">📱</span>
+                    <span class="pgto-label">PIX</span>
+                    <span class="pgto-valor" id="pgto-pix">R$ 0,00</span>
+                    <div class="pgto-barra-container"><div class="pgto-barra pgto-barra-pix" id="pgto-barra-pix"></div></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- RESUMO POR TURNOS -->
+        <section class="secao-relatorio" id="secao-turnos" style="display:none;">
+            <h2>Resumo por Turnos</h2>
+            <p class="secao-subtitulo">Desempenho de cada operador/turno no período</p>
+            <div id="turnos-corpo"></div>
+        </section>
+
+        <!-- GRÁFICO DE HORÁRIOS DE PICO -->
+        <section class="secao-relatorio">
+            <h2>Fluxo de Vendas por Horário</h2>
+            <p class="secao-subtitulo">Quantidade de vendas por hora do dia</p>
+            <div class="grafico-horarios" id="grafico-horarios">
+                <!-- Renderizado via JS -->
+            </div>
+        </section>
+
+        <!-- GRÁFICO POR DIA DA SEMANA -->
+        <section class="secao-relatorio">
+            <h2>Fluxo de Vendas por Dia da Semana</h2>
+            <p class="secao-subtitulo">Volume de vendas em cada dia da semana no período</p>
+            <div class="grafico-horarios" id="grafico-dias-semana"></div>
+        </section>
+
+        <!-- ANÁLISE DE PRODUTOS -->
+        <section class="secao-relatorio">
+            <div class="secao-header-flex">
+                <h2>Análise de Produtos</h2>
+                <select id="filtro-periodo-ranking" class="select-periodo" onchange="recalcularRankingPorPeriodo()">
+                    <option value="periodo">Período selecionado</option>
+                    <option value="dia">Hoje</option>
+                    <option value="mes">Este mês</option>
+                    <option value="semestre">Último semestre</option>
+                    <option value="ano">Este ano</option>
+                </select>
+            </div>
+            <table>
+                <thead>
+                <tr>
+                    <th class="col-posicao">#</th>
+                    <th class="clicavel-rel" onclick="ordenarRanking('nome')">Produto <span id="seta-rank-nome"></span></th>
+                    <th class="clicavel-rel" onclick="ordenarRanking('qtd')">Qtd. Vendida <span id="seta-rank-qtd"></span></th>
+                    <th class="clicavel-rel" onclick="ordenarRanking('faturamento')">Faturamento <span id="seta-rank-faturamento"></span></th>
+                </tr>
+                </thead>
+                <tbody id="tabela-ranking"></tbody>
+            </table>
+        </section>
+
+        <!-- PEGUE E MONTE (LOCAÇÕES) -->
+        <section class="secao-relatorio">
+            <div class="secao-header-flex">
+                <h2>🎪 Pegue e Monte</h2>
+                <input type="month" id="mes-pegue-monte" class="select-periodo" onchange="carregarPegueMonte()">
+            </div>
+            <p class="secao-subtitulo" id="pm-subtitulo">Locações do mês selecionado (canceladas ficam fora dos totais)</p>
+
+            <div class="dashboard-cards">
+                <div class="card">
+                    <h3>Locações no Mês</h3>
+                    <p id="pm-qtd">0</p>
+                </div>
+                <div class="card card-destaque">
+                    <h3>Valor Total</h3>
+                    <p id="pm-valor">R$ 0,00</p>
+                </div>
+                <div class="card">
+                    <h3>Tema Mais Alugado</h3>
+                    <p id="pm-tema-top" style="font-size: 20px;">—</p>
+                </div>
+            </div>
+
+            <table>
+                <thead>
+                <tr>
+                    <th>Tema</th>
+                    <th>Cliente</th>
+                    <th>Data do Evento</th>
+                    <th>Pagamento</th>
+                    <th>Status</th>
+                    <th>Valor</th>
+                </tr>
+                </thead>
+                <tbody id="pm-tabela"></tbody>
+            </table>
+        </section>
+
+        <!-- HISTÓRICO DETALHADO -->
+        <section class="secao-relatorio">
+            <h2>Histórico Detalhado de Vendas</h2>
+            <table>
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Data / Hora</th>
+                    <th>Itens Vendidos</th>
+                    <th>Pagamento</th>
+                    <th>Total</th>
+                </tr>
+                </thead>
+                <tbody id="tabela-historico-detalhado"></tbody>
+            </table>
+        </section>
+    </div>
+</div>
+
+<script src="toast.js"></script>
+<script src="nav.js"></script>
+<script src="script-relatorio.js"></script>
+</body>
+</html>

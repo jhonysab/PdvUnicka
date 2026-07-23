@@ -1,0 +1,116 @@
+/* style-relatorio.css — estilos exclusivos da tela de relatórios */
+
+.container { max-width: 1100px; }
+
+/* ── Filtros ───────────────────────────────────────────────────────── */
+
+.filtros-container {
+    display: flex; gap: 14px; align-items: flex-end;
+    background: var(--bg-surface); padding: 20px;
+    border-radius: var(--radius-lg); border: 1px solid var(--border);
+    margin-bottom: 24px; flex-wrap: wrap;
+}
+.filtro-grupo { display: flex; flex-direction: column; gap: 6px; }
+
+.btn-filtrar { background: var(--accent); color: #fff; padding: 11px 20px; font-size: 14px; border-radius: var(--radius); }
+.btn-filtrar:hover { background: var(--accent-hover); }
+
+.btn-pdf {
+    background: var(--bg-surface-alt); color: var(--red);
+    border: 1px solid var(--red); padding: 11px 20px;
+    font-size: 14px; margin-left: auto; border-radius: var(--radius);
+}
+.btn-pdf:hover { background: rgba(248,113,113,0.1); }
+
+/* ── Cabeçalho relatório ───────────────────────────────────────────── */
+
+.titulo-relatorio { font-size: 18px; font-weight: 700; color: var(--text); text-align: center; margin-bottom: 4px; }
+.periodo-texto    { text-align: center; color: var(--text-dim); font-weight: 600; font-size: 13px; margin-bottom: 24px; }
+
+/* ── Pagamento grid ────────────────────────────────────────────────── */
+
+.pagamento-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 16px; }
+
+.pgto-card {
+    background: var(--bg-body); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 16px;
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+}
+.pgto-icone  { font-size: 22px; }
+.pgto-label  { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+.pgto-valor  { font-size: 18px; font-weight: 700; color: var(--text); }
+.pgto-barra-container { width: 100%; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; margin-top: 4px; }
+.pgto-barra  { height: 100%; border-radius: 3px; transition: width 0.5s ease; width: 0; }
+.pgto-barra-dinheiro { background: var(--green); }
+.pgto-barra-credito  { background: var(--accent); }
+.pgto-barra-debito   { background: var(--purple); }
+.pgto-barra-pix      { background: var(--orange); }
+
+/* ── Gráfico de horários ───────────────────────────────────────────── */
+
+.grafico-horarios { display: flex; align-items: flex-end; gap: 4px; height: 200px; margin-top: 16px; padding: 0 4px; }
+
+.hora-coluna { flex: 1; display: flex; flex-direction: column; align-items: center; height: 100%; min-width: 0; }
+.hora-qtd    { font-size: 11px; font-weight: 700; color: var(--text-muted); margin-bottom: 4px; min-height: 16px; }
+.hora-barra-wrapper { flex: 1; width: 100%; display: flex; align-items: flex-end; }
+.hora-barra  { width: 100%; background: linear-gradient(to top, var(--accent), var(--purple)); border-radius: 4px 4px 0 0; min-height: 2px; transition: height 0.4s ease; }
+.hora-barra-pico { background: linear-gradient(to top, var(--green), #2dd4a8); box-shadow: 0 0 10px rgba(52,211,153,0.3); }
+.hora-label  { font-size: 10px; color: var(--text-dim); margin-top: 6px; font-weight: 600; }
+.dia-coluna  { min-width: 40px; }
+.grafico-vazio { text-align: center; color: var(--text-dim); padding: 40px; font-size: 14px; }
+
+/* ── Ranking ───────────────────────────────────────────────────────── */
+
+.ranking-badge { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 50%; font-weight: 700; font-size: 13px; color: #fff; }
+.ranking-badge.pos-1       { background: var(--yellow); color: #1a1a1a; }
+.ranking-badge.pos-2       { background: var(--border-light); }
+.ranking-badge.pos-3       { background: #b45309; }
+.ranking-badge.pos-default { background: var(--bg-hover); color: var(--text-muted); }
+
+/* ── Resumo por turnos ─────────────────────────────────────────────── */
+
+.turno-dia        { margin-bottom: 20px; }
+.turno-dia:last-child { margin-bottom: 0; }
+.turno-dia-header { font-size: 13px; font-weight: 700; color: var(--text); text-transform: capitalize; padding: 10px 16px; background: var(--bg-surface-alt); border-radius: var(--radius) var(--radius) 0 0; border: 1px solid var(--border); border-bottom: none; }
+.turno-card       { background: var(--bg-body); border: 1px solid var(--border); border-radius: 0 0 var(--radius) var(--radius); padding: 16px 20px; margin-bottom: 10px; }
+.turno-card:last-child { margin-bottom: 0; }
+.turno-header     { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--border); font-size: 14px; color: var(--text); }
+.turno-horario    { font-size: 13px; color: var(--text-dim); font-weight: 500; }
+.turno-badge      { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; margin-left: 8px; }
+.turno-aberto     { background: rgba(52,211,153,0.12); color: var(--green); border: 1px solid rgba(52,211,153,0.25); }
+.turno-fechado    { background: rgba(124,135,158,0.12); color: var(--text-muted); border: 1px solid var(--border); }
+.turno-metricas   { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+.turno-metrica    { text-align: center; }
+.turno-metrica-label  { display: block; font-size: 11px; font-weight: 600; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+.turno-metrica-valor  { display: block; font-size: 16px; font-weight: 700; color: var(--text); }
+.turno-valor-destaque { color: var(--green) !important; }
+.turno-fechamento { margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--border-light); display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+.turno-fch-linha  { text-align: center; font-size: 12px; }
+.turno-fch-linha span:first-child { display: block; color: var(--text-dim); font-size: 11px; margin-bottom: 2px; }
+.turno-fch-linha span:last-child  { font-weight: 700; color: var(--text); }
+.turno-positivo { color: var(--green) !important; }
+.turno-negativo { color: var(--red) !important; }
+
+/* ── Seletor de período / colunas clicáveis ────────────────────────── */
+
+.secao-header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+.secao-header-flex h2 { margin: 0; padding: 0; border: none; }
+
+.select-periodo {
+    padding: 7px 14px; background: var(--bg-body); border: 1px solid var(--border);
+    border-radius: var(--radius); color: var(--text); font-size: 13px;
+    font-family: var(--font); cursor: pointer;
+}
+.select-periodo:focus { border-color: var(--accent); outline: none; }
+
+.clicavel-rel       { cursor: pointer; user-select: none; }
+.clicavel-rel:hover { color: var(--text); }
+
+/* ── PDF / Print ───────────────────────────────────────────────────── */
+
+@media print {
+    .no-pdf { display: none !important; }
+    body { background: #fff; color: #333; padding: 0; }
+    .card, .secao-relatorio, .pgto-card { border-color: #ddd; background: #fff; }
+    .hora-barra { background: #333; }
+}

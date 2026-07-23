@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Vendas - Unicka Digital</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="style-global.css">
+    <link rel="stylesheet" href="style-caixa.css">
+</head>
+<body>
+
+<div class="container">
+
+    <header class="header-dashboard">
+        <div class="header-marca">
+            <span class="header-logo">U</span>
+            <div>
+                <h1>Unicka Digital</h1>
+                <p class="header-subtitulo">Painel de Vendas Diárias</p>
+            </div>
+        </div>
+        <nav class="header-nav" id="nav-principal">
+            <!-- Gerado pelo nav.js -->
+        </nav>
+    </header>
+
+    <!-- Cards de resumo -->
+    <div class="dashboard-cards">
+        <div class="card">
+            <h3>Vendas Realizadas</h3>
+            <p id="card-qtd-vendas">0</p>
+        </div>
+        <div class="card card-destaque card-so-admin">
+            <h3>Faturamento do Dia</h3>
+            <p id="card-total-ganho">R$ 0,00</p>
+        </div>
+        <div class="card card-pagamento card-so-admin">
+            <h3>💵 Dinheiro</h3>
+            <p id="card-dinheiro">R$ 0,00</p>
+        </div>
+        <div class="card card-pagamento card-so-admin">
+            <h3>💳 Cartão</h3>
+            <p id="card-cartao">R$ 0,00</p>
+        </div>
+        <div class="card card-pagamento card-so-admin">
+            <h3>📱 PIX</h3>
+            <p id="card-pix">R$ 0,00</p>
+        </div>
+        <div class="card card-sangria" onclick="abrirModalMovimentacoes()" style="cursor: pointer;" title="Clique para ver os motivos">
+            <h3><span class="seta-sangria">▼</span> Sangrias</h3>
+            <p id="card-sangrias">R$ 0,00</p>
+            <small style="color: var(--text-muted); font-size: 11px;">clique para ver motivos</small>
+        </div>
+        <div class="card" onclick="abrirModalServicosTurno()" style="cursor: pointer;" title="Recargas, Jaé e contas do turno">
+            <h3>🔄 Serviços</h3>
+            <p id="card-servicos">R$ 0,00</p>
+            <small style="color: var(--text-muted); font-size: 11px;">clique para ver o detalhe</small>
+        </div>
+    </div>
+
+    <div class="acoes-dashboard">
+        <span id="info-operador" style="display:none; color: var(--text-muted); font-size: 14px; align-self: center;"></span>
+        <button class="btn-nova-venda" onclick="abrirModalCaixa()">
+            <span class="btn-nova-venda-icon">+</span>
+            Nova Venda
+        </button>
+        <button class="btn-nova-venda" onclick="abrirModalServico()">
+            🔄 Serviço / Recarga
+        </button>
+        <button class="btn-sangria" onclick="abrirModalSangria('SANGRIA')">
+            <span class="seta-sangria">▼</span> Registrar Sangria
+        </button>
+        <button class="btn-suprimento" onclick="abrirModalSangria('SUPRIMENTO')">
+            <span class="seta-suprimento">▲</span> Suprimento
+        </button>
+        <button class="btn-fechar-caixa" id="btn-fechar-caixa" onclick="abrirModalFecharCaixa()" style="display:none;">
+            🔒 Fechar Caixa
+        </button>
+    </div>
+
+    <section class="secao-historico">
+        <h2>Histórico de Vendas</h2>
+        <div class="tabela-wrapper-scroll">
+            <table>
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Data / Hora</th>
+                    <th>Itens Vendidos</th>
+                    <th>Pagamento</th>
+                    <th>Total</th>
+                </tr>
+                </thead>
+                <tbody id="lista-historico-vendas"></tbody>
+            </table>
+        </div>
+    </section>
+</div>
+
+
+<!-- =========================================================================
+     MODAL FRENTE DE CAIXA
+     ========================================================================= -->
+<div class="modal-overlay" id="modalCaixa">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h1>Frente de Caixa</h1>
+            <button class="btn-fechar-modal" onclick="fecharModalCaixa()">✕ Fechar</button>
+        </div>
+
+        <div class="caixa-container">
+
+            <div class="painel-lateral">
+                <h2>Pesquisar Produto</h2>
+
+                <div class="input-group">
+                    <label for="buscaProduto">Nome, ID ou Cód. Barras:</label>
+                    <input id="buscaProduto" placeholder="Digite para buscar..."
+                           oninput="buscarSugestoes(); mostrarEstoque()"
+                           onkeypress="enterBuscaProduto(event)"
+                           onblur="esconderSugestoes('lista-sugestoes')">
+                    <div id="lista-sugestoes" class="lista-sugestoes"></div>
+                    <small id="info-estoque" class="info-estoque"></small>
+                </div>
+
+                <div class="input-group">
+                    <label for="quantidade">Quantidade:</label>
+                    <input type="number" id="quantidade" value="1" min="1" onkeypress="verificarEnter(event)">
+                </div>
+
+                <button class="btn-add" onclick="adicionarAoCarrinho()">Adicionar ao Carrinho</button>
+
+                <div class="total-box">
+                    <div class="total-box-linha">
+                        <span class="total-box-label">ITENS</span>
+                        <span class="total-box-valor-secundario" id="total-itens">0</span>
+                    </div>
+                    <div class="total-box-divisor"></div>
+                    <span class="total-box-label">TOTAL A PAGAR</span>
+                    <span class="total-box-valor" id="total-geral">R$ 0,00</span>
+                </div>
+
+                <!-- Desconto (opcional) -->
+                <div class="input-group" style="margin-top: 12px;">
+                    <label for="descontoValor">🏷️ Desconto (opcional):</label>
+                    <div style="display: flex; gap: 6px;">
+                        <input type="number" id="descontoValor" min="0" step="0.01" placeholder="0,00"
+                               oninput="atualizarTelaCarrinho()" style="flex: 1;">
+                        <select id="descontoTipo" onchange="atualizarTelaCarrinho()"
+                                style="width: 64px; background: #1a2233; color: inherit; border: 1px solid #2a3347; border-radius: 6px; text-align: center;">
+                            <option value="RS">R$</option>
+                            <option value="PCT">%</option>
+                        </select>
+                    </div>
+                    <small id="info-desconto" class="info-estoque" style="color: #34d399;"></small>
+                </div>
+
+                <!-- Cliente (opcional) -->
+                <div class="campo-cliente-caixa" id="campo-cliente-caixa">
+                    <span class="icone-cliente">👤</span>
+                    <input id="busca-cliente-caixa" placeholder="Cliente (opcional)..."
+                           oninput="buscarClientesCaixa()" autocomplete="off"
+                           onblur="esconderSugestoes('lista-sugestoes-cliente')">
+                    <button class="btn-limpar-cliente" id="btn-limpar-cliente" onclick="limparClienteCaixa()" style="display:none;">✕</button>
+                    <div id="lista-sugestoes-cliente" class="lista-sugestoes" style="top:44px;"></div>
+                </div>
+
+                <!-- Forma de Pagamento -->
+                <div class="input-group" style="margin-top: 18px;">
+                    <label>Forma de Pagamento:</label>
+                    <div class="formas-pagamento" id="formas-pagamento">
+                        <button class="btn-pagamento ativo" data-forma="DINHEIRO" onclick="selecionarPagamento(this)"><span>💵</span>Dinheiro</button>
+                        <button class="btn-pagamento"       data-forma="CREDITO"  onclick="selecionarPagamento(this)"><span>💳</span>Crédito</button>
+                        <button class="btn-pagamento"       data-forma="DEBITO"   onclick="selecionarPagamento(this)"><span>💳</span>Débito</button>
+                        <button class="btn-pagamento"       data-forma="PIX"      onclick="selecionarPagamento(this)"><span>📱</span>PIX</button>
+                    </div>
+                </div>
+
+                <!-- Troco (só aparece no modo Dinheiro) -->
+                <div id="secao-troco">
+                    <div class="input-group">
+                        <label>Valor Recebido:</label>
+                        <input type="number" id="valorRecebido" step="0.01" placeholder="0.00" oninput="calcularTroco()">
+                    </div>
+                    <div class="troco-box">
+                        <span class="troco-label">TROCO</span>
+                        <span class="troco-valor" id="valor-troco">R$ 0,00</span>
+                    </div>
+                </div>
+
+                <button class="btn-finalizar" onclick="finalizarVenda()">Finalizar Venda (Shift+Enter)</button>
+            </div>
+
+            <div class="painel-carrinho">
+                <h2>Itens da Compra</h2>
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Produto</th>
+                        <th>Qtd</th>
+                        <th>V. Unit.</th>
+                        <th>Total</th>
+                        <th class="col-acao">Excluir</th>
+                    </tr>
+                    </thead>
+                    <tbody id="lista-carrinho"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="barra-atalhos">
+            <span class="atalho-item"><kbd>Enter</kbd> Adicionar</span>
+            <span class="atalho-item"><kbd>F2</kbd> Venda Avulsa</span>
+            <span class="atalho-item"><kbd>Shift+Enter</kbd> Finalizar</span>
+            <span class="atalho-item"><kbd>ESC</kbd> Fechar</span>
+        </div>
+    </div>
+</div>
+
+
+<!-- =========================================================================
+     MODAL VENDA AVULSA (F2)
+     ========================================================================= -->
+<div class="modal-overlay" id="modalAvulso">
+    <div class="modal-avulso-content">
+        <h2>Venda Avulsa (F2)</h2>
+        <p class="modal-avulso-desc">Item não cadastrado no sistema</p>
+
+        <div class="input-group">
+            <label for="avulsoDescricao">Descrição do produto:</label>
+            <input id="avulsoDescricao" placeholder="Ex: Cabo USB, Adaptador..."
+                   onkeypress="if(event.key==='Enter') document.getElementById('avulsoPreco').focus()">
+        </div>
+
+        <div class="input-group">
+            <label for="avulsoPreco">Preço unitário (R$):</label>
+            <input type="number" id="avulsoPreco" step="0.01" min="0.01" placeholder="0.00"
+                   onkeypress="if(event.key==='Enter') document.getElementById('avulsoQtd').focus()">
+        </div>
+
+        <div class="input-group">
+            <label for="avulsoQtd">Quantidade:</label>
+            <input type="number" id="avulsoQtd" value="1" min="1"
+                   onkeypress="if(event.key==='Enter') confirmarAvulso()">
+        </div>
+
+        <div class="modal-avulso-botoes">
+            <button class="btn-add" onclick="confirmarAvulso()">Adicionar ao Carrinho</button>
+            <button class="btn-cancelar-avulso" onclick="fecharModalAvulso()">Cancelar (ESC)</button>
+        </div>
+    </div>
+</div>
+
+
+<!-- =========================================================================
+     MODAL SANGRIA
+     ========================================================================= -->
+<div class="modal-overlay" id="modalSangria">
+    <div class="modal-avulso-content">
+        <h2 id="sangria-titulo"><span class="seta-sangria">▼</span> Registrar Sangria</h2>
+        <p class="modal-avulso-desc" id="sangria-desc">Retirada de dinheiro do caixa</p>
+
+        <div class="input-group">
+            <label for="sangriaValor" id="sangria-label-valor">Valor retirado (R$):</label>
+            <input type="number" id="sangriaValor" step="0.01" min="0.01" placeholder="0.00"
+                   onkeypress="if(event.key==='Enter') document.getElementById('sangriaMotivo').focus()">
+        </div>
+
+        <div class="input-group">
+            <label for="sangriaMotivo">Motivo:</label>
+            <input id="sangriaMotivo" placeholder="Ex: Troco para caixa, Pagamento fornecedor..."
+                   onkeypress="if(event.key==='Enter') confirmarSangria()">
+        </div>
+
+        <div class="modal-avulso-botoes">
+            <button class="btn-sangria-confirmar" id="sangria-btn-confirmar" onclick="confirmarSangria()">✔ Confirmar Sangria</button>
+            <button class="btn-cancelar-avulso" onclick="fecharModalSangria()">Cancelar (ESC)</button>
+        </div>
+    </div>
+</div>
+
+
+<!-- =========================================================================
+     MODAL — MOVIMENTAÇÕES DE DINHEIRO (sangrias e suprimentos com motivo)
+     ========================================================================= -->
+<div class="modal-overlay" id="modalMovimentacoes">
+    <div class="modal-avulso-content" style="max-width: 560px; width: 90%;">
+        <h2>💸 Movimentações de Dinheiro</h2>
+        <p class="modal-avulso-desc" id="mov-subtitulo">Sangrias e suprimentos do turno atual</p>
+
+        <div id="lista-movimentacoes" style="max-height: 50vh; overflow-y: auto; margin: 12px 0;"></div>
+
+        <div class="modal-avulso-botoes">
+            <button class="btn-cancelar-avulso" onclick="fecharModalMovimentacoes()">Fechar (ESC)</button>
+        </div>
+    </div>
+</div>
+
+
+<!-- =========================================================================
+     MODAL — REGISTRAR SERVIÇO / RECARGA (dinheiro de passagem)
+     ========================================================================= -->
+<div class="modal-overlay" id="modalServico">
+    <div class="modal-avulso-content">
+        <h2>🔄 Registrar Serviço</h2>
+        <p class="modal-avulso-desc">Recarga, Jaé ou pagamento de conta — registre na hora, o fechamento soma sozinho</p>
+
+        <div class="input-group">
+            <label for="servicoTipo">Tipo de serviço:</label>
+            <select id="servicoTipo">
+                <option value="CELULAR">📱 Recarga de Celular</option>
+                <option value="JAE">🚌 Recarga Jaé</option>
+                <option value="CONTAS">📄 Pagamento de Conta</option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label for="servicoValor">Valor (R$):</label>
+            <input type="number" id="servicoValor" step="0.01" min="0.01" placeholder="0.00"
+                   onkeypress="if(event.key==='Enter') confirmarServico()">
+        </div>
+
+        <div class="input-group">
+            <label for="servicoForma">Como o cliente pagou:</label>
+            <select id="servicoForma">
+                <option value="DINHEIRO">💵 Dinheiro</option>
+                <option value="CREDITO">💳 Crédito</option>
+                <option value="DEBITO">💳 Débito</option>
+                <option value="PIX">📱 PIX</option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label for="servicoDescricao">Observação (opcional):</label>
+            <input id="servicoDescricao" placeholder="Ex: Recarga Tim 20, conta de luz..."
+                   onkeypress="if(event.key==='Enter') confirmarServico()">
+        </div>
+
+        <div class="modal-avulso-botoes">
+            <button class="btn-add" onclick="confirmarServico()">✔ Registrar Serviço</button>
+            <button class="btn-cancelar-avulso" onclick="fecharModalServico()">Cancelar (ESC)</button>
+        </div>
+    </div>
+</div>
+
+
+<!-- =========================================================================
+     MODAL — SERVIÇOS DO TURNO (lista com exclusão)
+     ========================================================================= -->
+<div class="modal-overlay" id="modalServicosTurno">
+    <div class="modal-avulso-content" style="max-width: 560px; width: 90%;">
+        <h2>🔄 Serviços do Turno</h2>
+        <p class="modal-avulso-desc">Recargas, Jaé e contas registradas neste caixa</p>
+
+        <div id="lista-servicos" style="max-height: 50vh; overflow-y: auto; margin: 12px 0;"></div>
+
+        <div class="modal-avulso-botoes">
+            <button class="btn-cancelar-avulso" onclick="fecharModalServicosTurno()">Fechar (ESC)</button>
+        </div>
+    </div>
+</div>
+
+
+<!-- =========================================================================
+     OVERLAY — CAIXA FECHADO
+     ========================================================================= -->
+<div class="overlay-caixa-fechado" id="overlay-caixa-fechado" style="display:none;">
+    <div class="overlay-conteudo">
+        <span class="overlay-icone">🔒</span>
+        <h2>Caixa Fechado</h2>
+        <p>Abra o caixa para iniciar as operações do turno.</p>
+        <button class="btn-abrir-caixa" onclick="abrirModalAbrirCaixa()">Abrir Caixa</button>
+        <button class="btn-overlay-home" onclick="window.location.href='index.html'">Ir ao início</button>
+    </div>
+</div>
+
+
+<!-- =========================================================================
+     MODAL — ABRIR CAIXA
+     ========================================================================= -->
+<div class="modal-overlay" id="modalAbrirCaixa">
+    <div class="modal-avulso-content">
+        <h2>🔓 Abrir Caixa</h2>
+        <p class="modal-avulso-desc">Início de turno</p>
+
+        <div class="input-group">
+            <label for="abrirOperador">Nome do Operador:</label>
+            <input id="abrirOperador" placeholder="Ex: Maria, João..."
+                   onkeypress="if(event.key==='Enter') document.getElementById('abrirValorInicial').focus()">
+        </div>
+
+        <div class="input-group">
+            <label for="abrirValorInicial">Valor inicial na gaveta (R$):</label>
+            <input type="number" id="abrirValorInicial" step="0.01" placeholder="0.00"
+                   onkeypress="if(event.key==='Enter') confirmarAberturaCaixa()">
+        </div>
+
+        <div class="modal-avulso-botoes">
+            <button class="btn-add" onclick="confirmarAberturaCaixa()">✔ Abrir Caixa</button>
+            <button class="btn-cancelar-avulso" onclick="fecharModalAbrirCaixa()">← Voltar (ESC)</button>
+        </div>
+    </div>
+</div>
+
+
+<!-- =========================================================================
+     MODAL — FECHAR CAIXA (resumo completo)
+     ========================================================================= -->
+<div class="modal-overlay" id="modalFecharCaixa">
+    <div class="modal-fechar-content">
+        <h2>🔒 Fechamento de Caixa</h2>
+
+        <div class="fch-grid">
+            <div class="fch-secao">
+                <h3>Informações do Turno</h3>
+                <div class="fch-linha"><span>Operador:</span> <span id="fch-operador">-</span></div>
+                <div class="fch-linha"><span>Abertura:</span> <span id="fch-abertura">-</span></div>
+                <div class="fch-linha fch-so-admin"><span>Valor inicial:</span> <span id="fch-valor-inicial">R$ 0,00</span></div>
+            </div>
+
+            <div class="fch-secao fch-so-admin">
+                <h3>Resumo de Vendas</h3>
+                <div class="fch-linha"><span>Vendas realizadas:</span> <span id="fch-qtd-vendas">0</span></div>
+                <div class="fch-linha"><span>Total vendido:</span> <span id="fch-total-vendas" class="fch-valor-destaque">R$ 0,00</span></div>
+            </div>
+
+            <div class="fch-secao fch-so-admin">
+                <h3>Formas de Pagamento</h3>
+                <div class="fch-linha"><span>💵 Dinheiro:</span> <span id="fch-dinheiro">R$ 0,00</span></div>
+                <div class="fch-linha"><span>💳 Cartão:</span> <span id="fch-cartao">R$ 0,00</span></div>
+                <div class="fch-linha"><span>📱 PIX:</span> <span id="fch-pix">R$ 0,00</span></div>
+                <div class="fch-linha fch-linha-sangria"><span><span class="seta-sangria">▼</span> Sangrias:</span> <span id="fch-sangrias">R$ 0,00</span></div>
+                <div class="fch-linha"><span><span class="seta-suprimento">▲</span> Suprimentos:</span> <span id="fch-suprimentos">R$ 0,00</span></div>
+            </div>
+
+            <div class="fch-secao">
+                <h3>Serviços de Passagem</h3>
+                <small class="fch-hint fch-hint-secao">Somado automaticamente dos serviços registrados durante o turno. Confira com o relatório da máquina — se não bater, algum serviço não foi registrado (dá para corrigir no card Serviços antes de fechar).</small>
+
+                <div class="fch-linha"><span>🚌 Recarga Jaé:</span> <span id="fch-rec-jae">R$ 0,00</span></div>
+                <div class="fch-linha"><span>📱 Recarga Celular:</span> <span id="fch-rec-celular">R$ 0,00</span></div>
+                <div class="fch-linha"><span>📄 Pagamento de Contas:</span> <span id="fch-rec-contas">R$ 0,00</span></div>
+                <div class="fch-linha"><span>💳 Pago no cartão/PIX:</span> <span id="fch-rec-cartao">R$ 0,00</span></div>
+
+                <div class="fch-total-servicos">
+                    <span>Total de serviços:</span>
+                    <span id="fch-total-servicos" class="fch-valor-servicos">R$ 0,00</span>
+                </div>
+                <div class="fch-total-servicos">
+                    <span>Em dinheiro na gaveta:</span>
+                    <span id="fch-servicos-gaveta" class="fch-valor-servicos">R$ 0,00</span>
+                </div>
+            </div>
+
+            <div class="fch-secao">
+                <h3>Conferência de Gaveta</h3>
+
+                <div class="input-group">
+                    <label for="fch-contado">💰 Valor contado na gaveta (R$):</label>
+                    <input type="number" id="fch-contado" step="0.01" placeholder="0.00">
+                </div>
+
+                <small class="fch-hint">Conte o dinheiro da gaveta e digite o valor exato encontrado.
+                A conferência (esperado × contado) aparece no Histórico de Caixas após o fechamento.</small>
+            </div>
+        </div>
+
+        <div class="modal-avulso-botoes fch-botoes">
+            <button class="btn-sangria-confirmar" onclick="confirmarFechamentoCaixa()">🔒 Confirmar Fechamento</button>
+            <button class="btn-cancelar-avulso" onclick="fecharModalFecharCaixa()">Cancelar</button>
+        </div>
+    </div>
+</div>
+
+
+<script src="toast.js"></script>
+<script src="nav.js"></script>
+<script src="script-caixa.js"></script>
+</body>
+</html>

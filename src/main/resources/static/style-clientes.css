@@ -1,0 +1,7 @@
+/* style-clientes.css — estilos exclusivos da tela de clientes */
+
+.container { max-width: 1050px; }
+
+.card p { font-size: 32px; color: var(--purple); }
+
+.form-grid { grid-template-columns: 1fr 1fr; }

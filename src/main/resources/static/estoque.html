@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estoque - Unicka Digital</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="style-global.css">
+    <link rel="stylesheet" href="style-estoque.css">
+</head>
+<body>
+
+<div class="container">
+
+    <header class="header-dashboard">
+        <div class="header-marca">
+            <span class="header-logo">U</span>
+            <div>
+                <h1>Unicka Digital</h1>
+                <p class="header-subtitulo">Gerenciamento de Estoque</p>
+            </div>
+        </div>
+        <nav class="header-nav" id="nav-principal">
+            <!-- Gerado pelo nav.js -->
+        </nav>
+    </header>
+
+    <!-- =====================================================================
+         FORMULÁRIO DE CADASTRO EXPANDIDO
+         ===================================================================== -->
+    <section class="secao-cadastro">
+        <div class="cadastro-header">
+            <h2>Cadastro de Produto</h2>
+            <button class="btn-toggle-form" id="btn-toggle-form" onclick="toggleFormulario()">
+                ▼ Expandir campos
+            </button>
+        </div>
+
+        <input type="hidden" id="produtoId">
+
+        <!-- Campos básicos — sempre visíveis -->
+        <div class="form-secao">
+            <span class="form-secao-label">Informações Básicas</span>
+            <div class="form-group-cadastro">
+                <div class="campo-grupo">
+                    <label for="nome">Nome do Produto *</label>
+                    <input type="text" id="nome" placeholder="Ex: Cabo USB-C 1m">
+                </div>
+                <div class="campo-grupo">
+                    <label for="preco">Preço de Venda (R$) *</label>
+                    <input type="number" id="preco" placeholder="0.00" step="0.01" oninput="calcularMargem()">
+                </div>
+                <div class="campo-grupo">
+                    <label for="estoque">Quantidade em Estoque *</label>
+                    <input type="number" id="estoque" placeholder="0">
+                </div>
+                <div class="campo-grupo">
+                    <label for="codigoBarras">Código de Barras</label>
+                    <input type="text" id="codigoBarras" placeholder="Ex: 7891234567890">
+                </div>
+                <div class="campo-grupo">
+                    <label for="estoqueMinimo">Estoque Mínimo</label>
+                    <input type="number" id="estoqueMinimo" placeholder="0 = sem alerta">
+                </div>
+            </div>
+        </div>
+
+        <!-- Campos expandidos — colapsáveis -->
+        <div id="campos-expandidos" class="campos-expandidos">
+
+            <!-- Precificação -->
+            <div class="form-secao">
+                <span class="form-secao-label">💰 Precificação</span>
+                <div class="form-group-cadastro">
+                    <div class="campo-grupo">
+                        <label for="custoCompra">Custo de Compra (R$)</label>
+                        <input type="number" id="custoCompra" placeholder="0.00" step="0.01" oninput="calcularMargem()">
+                    </div>
+                    <div class="campo-grupo">
+                        <label for="unidadeMedida">Unidade de Medida</label>
+                        <select id="unidadeMedida">
+                            <option value="">Selecionar...</option>
+                            <option value="UNIDADE">Unidade</option>
+                            <option value="KG">Kg</option>
+                            <option value="METRO">Metro</option>
+                            <option value="LITRO">Litro</option>
+                        </select>
+                    </div>
+                    <div class="campo-grupo">
+                        <label for="modelo">Modelo / Referência</label>
+                        <input type="text" id="modelo" placeholder="Ex: TP-Link TL-WA850RE">
+                    </div>
+                    <div class="campo-grupo campo-margem">
+                        <label>Margem de Lucro</label>
+                        <div class="margem-display" id="margem-display">
+                            <span id="margem-valor">—</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fornecedor -->
+            <div class="form-secao">
+                <span class="form-secao-label">🏭 Fornecedor</span>
+                <div class="form-group-cadastro">
+                    <div class="campo-grupo" style="position:relative;">
+                        <label for="fornecedorNome">Nome do Fornecedor</label>
+                        <input type="text" id="fornecedorNome" placeholder="Ex: Distribuidora ABC"
+                               oninput="sugerirFornecedor()" autocomplete="off">
+                        <div id="sugestoes-fornecedor" class="lista-sugestoes"></div>
+                    </div>
+                    <div class="campo-grupo">
+                        <label for="fornecedorTelefone">Telefone / Contato</label>
+                        <input type="text" id="fornecedorTelefone" placeholder="Ex: (21) 99999-0000">
+                    </div>
+                    <div class="campo-grupo">
+                        <label for="fornecedorEndereco">Endereço do Fornecedor</label>
+                        <input type="text" id="fornecedorEndereco" placeholder="Ex: Rua das Flores, 100 - Centro">
+                    </div>
+                    <div class="campo-grupo">
+                        <label for="fornecedorPagamento">Forma de Pagamento ao Fornecedor</label>
+                        <select id="fornecedorPagamento">
+                            <option value="">Selecionar...</option>
+                            <option value="DINHEIRO">Dinheiro</option>
+                            <option value="PIX">PIX</option>
+                            <option value="BOLETO">Boleto</option>
+                            <option value="CREDITO">Cartão Crédito</option>
+                            <option value="DEBITO">Cartão Débito</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Localização e Datas -->
+            <div class="form-secao">
+                <span class="form-secao-label">📍 Localização e Datas</span>
+                <div class="form-group-cadastro">
+                    <div class="campo-grupo">
+                        <label for="localizacao">Localização na Loja</label>
+                        <input type="text" id="localizacao" placeholder="Ex: Vitrine central, Prateleira 3">
+                    </div>
+                    <div class="campo-grupo">
+                        <label for="dataCompra">Data de Compra</label>
+                        <input type="date" id="dataCompra">
+                    </div>
+                    <div class="campo-grupo">
+                        <label for="dataValidade">Data de Validade</label>
+                        <input type="date" id="dataValidade">
+                    </div>
+                </div>
+            </div>
+
+        </div><!-- /campos-expandidos -->
+
+        <div class="cadastro-botoes">
+            <button id="btn-salvar" class="btn-salvar" onclick="salvarProduto()">Cadastrar Produto</button>
+            <button class="btn-limpar" onclick="limparFormulario()">✕ Limpar</button>
+        </div>
+    </section>
+
+    <!-- ALERTAS DE ESTOQUE MÍNIMO -->
+    <div id="alertas-estoque" style="display:none;" class="alerta-estoque-minimo">
+        <h3>⚠ Produtos abaixo do estoque mínimo</h3>
+        <div id="alertas-lista"></div>
+    </div>
+
+    <div class="divisor"></div>
+
+    <!-- =====================================================================
+         LISTA DE COMPRAS / PEDIDOS DE CLIENTES
+         ===================================================================== -->
+    <section class="secao-cadastro">
+        <div class="cadastro-header">
+            <div>
+                <h2>🛒 Lista de Compras e Pedidos</h2>
+                <span style="color: var(--text-muted); font-size: 13px;">Pedidos de clientes e produtos acabando — anote aqui para comprar depois</span>
+            </div>
+            <button class="btn-exportar-compras" onclick="exportarPedidosPDF()" title="Exportar os itens pendentes em PDF para imprimir e ir comprar">📄 Exportar PDF</button>
+        </div>
+
+        <div class="form-group-cadastro">
+            <div class="campo-grupo">
+                <label for="compraNome">Produto *</label>
+                <input type="text" id="compraNome" placeholder="Ex: Película iPhone 13" onkeydown="if(event.key==='Enter')adicionarItemCompra()">
+            </div>
+            <div class="campo-grupo">
+                <label for="compraQtd">Quantidade</label>
+                <input type="number" id="compraQtd" placeholder="1" min="1" onkeydown="if(event.key==='Enter')adicionarItemCompra()">
+            </div>
+            <div class="campo-grupo">
+                <label for="compraObs">Observação do Produto</label>
+                <input type="text" id="compraObs" placeholder="Ex: capa rosa, modelo iPhone 13" onkeydown="if(event.key==='Enter')adicionarItemCompra()">
+            </div>
+            <div class="campo-grupo">
+                <label for="compraCliente">Cliente (quem pediu)</label>
+                <input type="text" id="compraCliente" placeholder="Ex: Maria — (21) 99999-0000" onkeydown="if(event.key==='Enter')adicionarItemCompra()">
+            </div>
+        </div>
+        <div class="cadastro-botoes">
+            <button class="btn-salvar" onclick="adicionarItemCompra()">+ Adicionar à Lista</button>
+        </div>
+
+        <table style="margin-top: 14px;">
+            <thead>
+            <tr>
+                <th style="width: 40px;">✓</th>
+                <th>Produto</th>
+                <th>Qtd</th>
+                <th>Observação</th>
+                <th>Cliente</th>
+                <th>Anotado em</th>
+                <th class="col-acoes">Ações</th>
+            </tr>
+            </thead>
+            <tbody id="tabela-compras"></tbody>
+        </table>
+
+        <div class="paginacao">
+            <button class="btn-pag" onclick="paginaAnteriorCompras()">Anterior</button>
+            <span id="info-paginas-compras">Página 1 de 1</span>
+            <button class="btn-pag" onclick="proximaPaginaCompras()">Próxima</button>
+        </div>
+    </section>
+
+    <div class="divisor"></div>
+
+    <!-- =====================================================================
+         LISTA DE PRODUTOS
+         ===================================================================== -->
+    <section class="secao-lista">
+        <h2>Lista de Produtos</h2>
+        <input type="text" id="barra-pesquisa" class="input-pesquisa"
+               placeholder="🔍 Pesquisar por nome ou código de barras..."
+               oninput="filtrarEPaginar()">
+
+        <table>
+            <thead>
+            <tr>
+                <th class="clicavel" onclick="alterarOrdenacao('id')">ID <span id="seta-id">▲</span></th>
+                <th class="clicavel" onclick="alterarOrdenacao('nome')">Nome <span id="seta-nome"></span></th>
+                <th class="clicavel" onclick="alterarOrdenacao('preco')">Preço <span id="seta-preco"></span></th>
+                <th class="clicavel" onclick="alterarOrdenacao('custoCompra')">Custo <span id="seta-custoCompra"></span></th>
+                <th class="clicavel" onclick="alterarOrdenacao('margemLucro')">Margem <span id="seta-margemLucro"></span></th>
+                <th class="clicavel" onclick="alterarOrdenacao('estoque')">Estoque <span id="seta-estoque"></span></th>
+                <th class="clicavel" onclick="alterarOrdenacao('localizacao')">Localização <span id="seta-localizacao"></span></th>
+                <th class="clicavel" onclick="alterarOrdenacao('dataValidade')">Validade <span id="seta-dataValidade"></span></th>
+                <th class="col-acoes">Ações</th>
+            </tr>
+            </thead>
+            <tbody id="tabela-produtos"></tbody>
+        </table>
+
+        <div class="paginacao">
+            <button class="btn-pag" onclick="paginaAnterior()">Anterior</button>
+            <span id="info-paginas">Página 1 de 1</span>
+            <button class="btn-pag" onclick="proximaPagina()">Próxima</button>
+        </div>
+    </section>
+
+</div>
+
+<script src="toast.js"></script>
+<script src="nav.js"></script>
+<script src="jspdf.umd.min.js"></script>
+<script src="script-estoque.js"></script>
+</body>
+</html>

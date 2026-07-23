@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pegue e Monte - Unicka Digital</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="style-global.css">
+    <link rel="stylesheet" href="style-locacoes.css">
+</head>
+<body>
+
+<div class="container">
+
+    <header class="header-dashboard">
+        <div class="header-marca">
+            <span class="header-logo">U</span>
+            <div>
+                <h1>Unicka Digital</h1>
+                <p class="header-subtitulo">Pegue e Monte — Locações</p>
+            </div>
+        </div>
+        <nav class="header-nav" id="nav-principal">
+            <!-- Gerado pelo nav.js -->
+        </nav>
+    </header>
+
+    <!-- ALERTAS DE EVENTOS PRÓXIMOS -->
+    <div id="alertas-proximos" class="alertas-proximos" style="display:none;">
+        <h3>📅 Eventos nos próximos 7 dias</h3>
+        <div id="alertas-lista"></div>
+    </div>
+
+    <!-- CARDS RESUMO -->
+    <div class="dashboard-cards">
+        <div class="card">
+            <h3>Reservados</h3>
+            <p id="card-reservados" class="card-reservado-valor">0</p>
+        </div>
+        <div class="card">
+            <h3>Entregues</h3>
+            <p id="card-entregues" class="card-entregue-valor">0</p>
+        </div>
+        <div class="card card-destaque">
+            <h3>Total Locações</h3>
+            <p id="card-total-locacoes">0</p>
+        </div>
+    </div>
+
+    <!-- BOTÃO NOVA LOCAÇÃO -->
+    <div class="acoes-dashboard">
+        <button class="btn-nova-locacao" onclick="abrirModalLocacao()">
+            <span class="btn-nova-venda-icon">+</span>
+            Nova Locação
+        </button>
+    </div>
+
+    <!-- FILTRO POR STATUS -->
+    <section class="secao-lista">
+        <div class="filtro-status">
+            <h2>Locações</h2>
+            <div class="filtro-btns">
+                <button class="btn-filtro ativo" data-status="TODOS" onclick="filtrarPorStatus('TODOS', this)">Todos</button>
+                <button class="btn-filtro" data-status="RESERVADO" onclick="filtrarPorStatus('RESERVADO', this)">Reservados</button>
+                <button class="btn-filtro" data-status="ENTREGUE" onclick="filtrarPorStatus('ENTREGUE', this)">Entregues</button>
+                <button class="btn-filtro" data-status="DEVOLVIDO" onclick="filtrarPorStatus('DEVOLVIDO', this)">Devolvidos</button>
+                <button class="btn-filtro" data-status="CANCELADO" onclick="filtrarPorStatus('CANCELADO', this)">Cancelados</button>
+            </div>
+        </div>
+
+        <div id="lista-locacoes" class="lista-locacoes">
+            <!-- Renderizado via JS -->
+        </div>
+    </section>
+</div>
+
+<!-- MODAL NOVA/EDITAR LOCAÇÃO -->
+<div class="modal-overlay" id="modalLocacao">
+    <div class="modal-locacao-content">
+        <h2 id="modal-locacao-titulo">Nova Locação</h2>
+        <input type="hidden" id="locacaoId">
+
+        <div class="form-grid-locacao">
+            <div class="input-group campo-largo">
+                <label for="locCliente">Cliente:</label>
+                <select id="locCliente">
+                    <option value="">Selecionar cliente...</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label for="locTema">Tema:</label>
+                <input id="locTema" placeholder="Ex: Fazendinha, Princesas..." list="temas-sugestoes">
+                <datalist id="temas-sugestoes">
+                    <option value="Fazendinha">
+                    <option value="Princesas">
+                    <option value="Super-Heróis">
+                    <option value="Safari">
+                    <option value="Circo">
+                    <option value="Unicórnio">
+                    <option value="Fundo do Mar">
+                    <option value="Galinha Pintadinha">
+                    <option value="Patrulha Canina">
+                    <option value="Mickey e Minnie">
+                </datalist>
+            </div>
+
+            <div class="input-group">
+                <label for="locValor">Valor (R$):</label>
+                <input type="number" id="locValor" step="0.01" placeholder="0.00">
+            </div>
+
+            <div class="input-group">
+                <label for="locPagamento">Forma de Pagamento:</label>
+                <select id="locPagamento">
+                    <option value="">Selecionar...</option>
+                    <option value="DINHEIRO">Dinheiro</option>
+                    <option value="PIX">PIX</option>
+                    <option value="CREDITO">Cartão Crédito</option>
+                    <option value="DEBITO">Cartão Débito</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label for="locDataEvento">Data do Evento:</label>
+                <input type="date" id="locDataEvento">
+            </div>
+
+            <div class="input-group">
+                <label for="locDataEntrega">Data de Entrega:</label>
+                <input type="date" id="locDataEntrega">
+            </div>
+
+            <div class="input-group">
+                <label for="locDataDevolucao">Data de Devolução:</label>
+                <input type="date" id="locDataDevolucao">
+            </div>
+
+            <div class="input-group campo-largo">
+                <label for="locEndereco">Endereço de Entrega:</label>
+                <input id="locEndereco" placeholder="Rua, número, bairro (ou puxar do cliente)">
+            </div>
+
+            <div class="input-group campo-largo">
+                <label for="locObs">Observações:</label>
+                <input id="locObs" placeholder="Ex: Retirada na loja, montar no dia anterior...">
+            </div>
+        </div>
+
+        <div class="modal-avulso-botoes">
+            <button class="btn-salvar-locacao" id="btn-salvar-locacao" onclick="salvarLocacao()">Reservar Locação</button>
+            <button class="btn-cancelar-avulso" onclick="fecharModalLocacao()">Cancelar</button>
+        </div>
+    </div>
+</div>
+
+<script src="toast.js"></script>
+<script src="nav.js"></script>
+<script src="script-locacoes.js"></script>
+</body>
+</html>
