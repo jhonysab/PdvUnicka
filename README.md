@@ -88,6 +88,8 @@ src/main/
 
 > 📁 **Onde ficam os dados:** o banco e os backups **não** vivem no projeto. Ficam na pasta do usuário do Windows, em `~/UnickaPDV/` (`dados/` e `backups/`). Assim, atualizar o sistema é só trocar o programa — os dados da loja permanecem intactos.
 
+> 🏪 **Dados da loja:** o nome, o CNPJ e o endereço que saem no cupom ficam em `unicka-local.properties`, na raiz do projeto e **fora do Git**. O modelo versionado é o `unicka-local.properties.exemplo`.
+
 ---
 
 ## 🚀 Como rodar (desenvolvimento)
@@ -100,6 +102,16 @@ Pré-requisitos: **JDK 25** instalado.
 ```
 
 O sistema sobe em `http://localhost:8080` e abre o navegador sozinho.
+
+### Dados da loja no cupom
+
+O cabeçalho do cupom (nome, CNPJ e endereço) **não fica no código**: vem de um arquivo local que não é versionado. Copie o modelo e preencha com os dados reais:
+
+```bash
+cp unicka-local.properties.exemplo unicka-local.properties
+```
+
+Sem esse arquivo o sistema inicia normalmente — o cupom apenas sai sem CNPJ e sem endereço.
 
 **Login inicial:** usuário `admin`, senha `admin123` (crie os usuários reais na tela *Usuários* e troque essa senha padrão).
 
@@ -122,8 +134,8 @@ Isso produz uma pasta `PDV-Unicka/` com um `.exe` que roda sem Java instalado �
 ## 🔒 Segurança & dados
 
 - Senhas são guardadas com **hash BCrypt** (nunca em texto puro) e nunca são devolvidas nas respostas da API.
-- Toda a API exige **sessão autenticada**; rotas administrativas checam o perfil no servidor.
-- Este repositório contém **apenas o código-fonte**. Os bancos de dados da loja, artefatos de build (`target/`, `entrega/`) e configurações locais ficam de fora via `.gitignore`.
+- Toda a API exige **sessão autenticada**. O cadastro de usuários e a rotina de backup checam o perfil **ADMIN no próprio servidor**; nas demais telas, a separação entre Administrador e Funcionário é aplicada na interface. Como o sistema roda só na máquina da loja e nunca fica exposto à rede, esse nível atende ao cenário — levar a checagem de perfil para o servidor em todas as rotas é a próxima melhoria da lista.
+- Este repositório contém **apenas o código-fonte**. Ficam de fora, via `.gitignore`: os bancos de dados da loja, os artefatos de build (`target/`, `entrega/`) e o `unicka-local.properties`, que guarda os dados reais da loja usados no cupom.
 
 ---
 

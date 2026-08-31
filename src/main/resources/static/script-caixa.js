@@ -7,6 +7,7 @@ const API_PRODUTOS = "http://localhost:8080/api/produtos";
 const API_SANGRIAS = "http://localhost:8080/api/vendas/sangrias";
 const API_CAIXA    = "http://localhost:8080/api/caixa";
 const API_SERVICOS = "http://localhost:8080/api/servicos";
+const API_CONFIG   = "http://localhost:8080/api/config";
 
 let carrinho              = [];
 let totalCompra           = 0;   // subtotal bruto (soma dos itens)
@@ -18,6 +19,9 @@ let formaPagamento        = "DINHEIRO";
 let caixaAberto           = null;
 let clienteSelecionadoId  = null;
 
+// Dados da loja para o cabeçalho do cupom, preenchidos por carregarDadosDaLoja().
+let dadosLoja             = { nome: "UNICKA DIGITAL", cnpj: "", endereco: "" };
+
 
 // ADMIN + FUNCIONARIO
 const _perfil = sessionStorage.getItem("perfil");
@@ -28,6 +32,7 @@ if (!_perfil) window.location.href = "index.html";
 
 verificarCaixa();
 aplicarVisibilidadePorPerfil();
+carregarDadosDaLoja();
 
 // Conferência cega: funcionário não vê os valores do dia (faturamento, dinheiro,
 // cartão, PIX) nem o detalhamento no fechamento — senão daria pra deduzir o
@@ -37,6 +42,18 @@ function aplicarVisibilidadePorPerfil() {
     document.querySelectorAll(".card-so-admin, .fch-so-admin").forEach((el) => {
         el.style.display = "none";
     });
+}
+
+// Busca no back-end o nome, o CNPJ e o endereço que vão no cabeçalho do cupom.
+// Esses dados não ficam no código: vêm do arquivo unicka-local.properties, que
+// está fora do Git. Se a busca falhar, o cupom sai com os valores padrão.
+async function carregarDadosDaLoja() {
+    try {
+        const resposta = await fetch(`${API_CONFIG}/loja`);
+        if (resposta.ok) dadosLoja = await resposta.json();
+    } catch (erro) {
+        console.error("Erro ao carregar dados da loja:", erro);
+    }
 }
 
 window.addEventListener("keydown", (e) => {
@@ -1167,6 +1184,11 @@ function imprimirCupom(dadosVenda) {
         </tr>
     ` : "";
 
+    // Cabeçalho da loja: CNPJ e endereço só entram no cupom quando estão
+    // configurados em unicka-local.properties (ver README).
+    const linhaCnpj     = dadosLoja.cnpj     ? `<span style="font-size: 10px;">CNPJ: ${dadosLoja.cnpj}</span><br>` : "";
+    const linhaEndereco = dadosLoja.endereco ? `<span style="font-size: 10px;">${dadosLoja.endereco}</span>` : "";
+
     const cupomHTML = `
     <!DOCTYPE html>
     <html lang="pt-BR">
@@ -1209,9 +1231,9 @@ function imprimirCupom(dadosVenda) {
     <body>
         <div class="cupom">
             <div class="cupom-centro">
-                <strong style="font-size: 14px;">UNICKA DIGITAL</strong><br>
-                <span style="font-size: 10px;">CNPJ: 00.000.000/0001-00</span><br>
-                <span style="font-size: 10px;">Rua Exemplo, 000</span>
+                <strong style="font-size: 14px;">${dadosLoja.nome}</strong><br>
+                ${linhaCnpj}
+                ${linhaEndereco}
             </div>
             <div class="cupom-linha"></div>
             <div class="cupom-centro" style="font-size: 13px; font-weight: bold;">CUPOM DE VENDA</div>

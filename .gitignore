@@ -44,3 +44,7 @@ dados/
 *.log
 # Config local do Claude Code (especifico da maquina)
 **/.claude/settings.local.json
+
+# Dados reais da loja (CNPJ e endereco do cupom) - ficam so na maquina.
+# O modelo versionado e o unicka-local.properties.exemplo.
+unicka-local.properties

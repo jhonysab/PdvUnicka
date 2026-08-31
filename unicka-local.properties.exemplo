@@ -1,0 +1,29 @@
+# =============================================================================
+# DADOS DA LOJA - MODELO DE EXEMPLO
+# =============================================================================
+# Este arquivo e apenas um MODELO, e ele SIM vai para o GitHub.
+#
+# Para usar de verdade:
+#   1) faca uma copia deste arquivo na raiz do projeto
+#   2) renomeie a copia para  unicka-local.properties  (sem o ".exemplo")
+#   3) troque os valores abaixo pelos dados reais da loja
+#
+# O arquivo "unicka-local.properties" esta no .gitignore: os dados reais ficam
+# so na maquina da loja e nunca sobem para o repositorio.
+#
+# Se o arquivo nao existir, o sistema inicia normalmente e o cupom sai apenas
+# sem CNPJ e sem endereco.
+#
+# ACENTOS: em arquivos .properties do Java, acento digitado direto pode sair
+# errado na impressao. Use os codigos abaixo no lugar da letra acentuada:
+#   \u00E1 = a agudo     \u00E9 = e agudo     \u00ED = i agudo
+#   \u00F3 = o agudo     \u00FA = u agudo     \u00E7 = c cedilha
+#   \u00E3 = a til       \u00F5 = o til
+#   \u00E2 = a circunflexo   \u00EA = e circunflexo   \u00F4 = o circunflexo
+#
+# Exemplo:  loja.endereco=Rua S\u00E3o Jo\u00E3o, 120
+# =============================================================================
+
+loja.nome=MINHA LOJA
+loja.cnpj=00.000.000/0001-00
+loja.endereco=Rua Exemplo, 000 - Centro
