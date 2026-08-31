@@ -141,6 +141,6 @@ Distribuído sob a **Licença MIT** — você pode usar, estudar, modificar e co
 
 <div align="center">
 
-*Projeto pessoal e de estudo. Desenvolvido com ❤️ para a loja da família.*
+*Projeto pessoal e de estudo. Desenvolvido para a loja da família.*
 
 </div>
