@@ -302,6 +302,15 @@ tr:hover td { background: var(--bg-hover); }
 .card-pagamento p { color: var(--accent); font-size: 20px; }
 .card-sangria p   { color: var(--red);   font-size: 20px; }
 
+/* Card "Movimentação de Dinheiro" — visual âmbar destacado (clicável) */
+.card-movimentacao {
+    border-color: rgba(251, 191, 36, 0.5);
+    background:   rgba(251, 191, 36, 0.07);
+}
+.card-movimentacao:hover { border-color: var(--yellow); transform: translateY(-2px); }
+.card-movimentacao h3    { color: var(--yellow); }
+.card-movimentacao p     { color: var(--yellow); font-size: 20px; }
+
 /* =============================================================================
    SEÇÕES
    ============================================================================= */

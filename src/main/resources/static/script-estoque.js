@@ -467,6 +467,7 @@ const API_COMPRAS = "http://localhost:8080/api/compras";
 
 let itensCompra          = [];
 let paginaCompras        = 1;
+let ordemComprasAsc      = true;   // ordem alfabética por nome do produto (A→Z)
 const COMPRAS_POR_PAGINA = 5;
 
 carregarListaCompras();
@@ -479,9 +480,7 @@ async function carregarListaCompras() {
         const itens = await fetch(API_COMPRAS).then((r) => r.json());
         itensCompra = Array.isArray(itens) ? itens : [];
 
-        // Pendentes primeiro, comprados no fim (riscados)
-        itensCompra.sort((a, b) => (a.status === "COMPRADO") - (b.status === "COMPRADO"));
-
+        ordenarComprasLista();
         renderComprasPagina();
 
     } catch (erro) {
@@ -490,6 +489,26 @@ async function carregarListaCompras() {
         tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color: #f87171;">Erro ao carregar a lista de compras.</td></tr>`;
         document.getElementById("info-paginas-compras").innerText = "Página 1 de 1";
     }
+}
+
+// Pendentes primeiro, comprados no fim (riscados); dentro de cada grupo, ordem alfabética por nome
+function ordenarComprasLista() {
+    itensCompra.sort((a, b) => {
+        const st = (a.status === "COMPRADO") - (b.status === "COMPRADO");
+        if (st !== 0) return st;
+        const cmp = (a.nome || "").localeCompare(b.nome || "", "pt-BR", { sensitivity: "base" });
+        return ordemComprasAsc ? cmp : -cmp;
+    });
+}
+
+// Clique no cabeçalho "Produto" alterna A→Z / Z→A
+function ordenarCompras() {
+    ordemComprasAsc = !ordemComprasAsc;
+    const seta = document.getElementById("seta-compras-nome");
+    if (seta) seta.innerText = ordemComprasAsc ? "▲" : "▼";
+    paginaCompras = 1;
+    ordenarComprasLista();
+    renderComprasPagina();
 }
 
 function renderComprasPagina() {
@@ -547,7 +566,9 @@ function proximaPaginaCompras() {
 // =============================================================================
 
 function exportarPedidosPDF() {
-    const pendentes = itensCompra.filter((i) => i.status !== "COMPRADO");
+    const pendentes = itensCompra
+        .filter((i) => i.status !== "COMPRADO")
+        .sort((a, b) => (a.nome || "").localeCompare(b.nome || "", "pt-BR", { sensitivity: "base" }));
 
     if (!pendentes.length) {
         showToast("Nenhum item pendente para exportar.", "aviso");
